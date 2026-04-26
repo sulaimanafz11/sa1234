@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Halal Stocks AI — Your Personal Portfolio Advisor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-left">
+      <div class="logo">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <polygon points="14,2 26,9 26,21 14,26 2,21 2,9" fill="#f5a623" opacity="0.15"/>
+          <polygon points="14,5 23,10.5 23,20.5 14,23 5,20.5 5,10.5" stroke="#f5a623" stroke-width="1.5" fill="none"/>
+          <text x="14" y="18" text-anchor="middle" fill="#f5a623" font-size="11" font-weight="700">H</text>
+        </svg>
+        <span class="logo-text">HALAL<span class="logo-accent">AI</span></span>
+      </div>
+      <div class="demo-badge" id="demoBadge">● DEMO</div>
+    </div>
+    <div class="header-center">
+      <div class="market-ticker" id="marketTicker"></div>
+    </div>
+    <div class="header-right">
+      <div class="market-status-pill" id="marketStatusPill">
+        <span class="status-dot"></span>
+        <span id="marketStatusText">Markets Open</span>
+      </div>
+      <button class="btn-settings" onclick="openSettings()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
+        </svg>
+        Settings
+      </button>
+    </div>
+  </header>
+
+  <!-- SETTINGS MODAL -->
+  <div class="modal-overlay" id="settingsModal" onclick="closeSettingsOutside(event)">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <h3>Connect Live Data</h3>
+          <p class="modal-subtitle">Add API keys to switch from demo to real data</p>
+        </div>
+        <button class="modal-close" onclick="closeSettings()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Trading 212 API Key</label>
+          <div class="input-wrap">
+            <input type="password" id="t212Key" placeholder="Paste your Trading 212 key...">
+            <button class="toggle-vis" onclick="toggleVis('t212Key')">👁</button>
+          </div>
+          <span class="input-hint">Settings → API in your Trading 212 app</span>
+        </div>
+        <div class="form-group">
+          <label>Alpha Vantage API Key <span class="free-badge">FREE</span></label>
+          <div class="input-wrap">
+            <input type="password" id="avKey" placeholder="Paste your Alpha Vantage key...">
+            <button class="toggle-vis" onclick="toggleVis('avKey')">👁</button>
+          </div>
+          <span class="input-hint">Get free key at alphavantage.co — takes 30 seconds</span>
+        </div>
+        <button class="btn-save" onclick="saveKeys()">
+          <span>Save & Go Live</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+        <p class="modal-note">Keys are stored locally on your device only. Never shared.</p>
+      </div>
+    </div>
+  </div>
+
+  <main class="main">
+
+    <!-- PORTFOLIO HERO -->
+    <section class="hero">
+      <div class="hero-inner">
+        <div class="hero-left">
+          <p class="hero-label">Total Portfolio Value</p>
+          <h1 class="hero-value" id="portfolioValue">£234.80</h1>
+          <div class="hero-change positive" id="heroChange">
+            <span class="change-icon">▲</span>
+            <span id="changeAmt">+£4.20</span>
+            <span id="changePct">(+1.82%)</span>
+            <span class="change-label">today</span>
+          </div>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <span class="hero-stat-label">Cash</span>
+            <span class="hero-stat-val" id="cashVal">£45.00</span>
+          </div>
+          <div class="hero-stat-divider"></div>
+          <div class="hero-stat">
+            <span class="hero-stat-label">Invested</span>
+            <span class="hero-stat-val" id="investedVal">£189.80</span>
+          </div>
+          <div class="hero-stat-divider"></div>
+          <div class="hero-stat">
+            <span class="hero-stat-label">All-time</span>
+            <span class="hero-stat-val positive" id="allTimeVal">+17.4%</span>
+          </div>
+          <div class="hero-stat-divider"></div>
+          <div class="hero-stat">
+            <span class="hero-stat-label">Holdings</span>
+            <span class="hero-stat-val" id="holdingsCount">4</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-chart-wrap">
+        <canvas id="portfolioChart"></canvas>
+      </div>
+    </section>
+
+    <!-- AI DAILY BRIEF -->
+    <section class="section">
+      <div class="section-header">
+        <div class="section-title-wrap">
+          <div class="section-icon ai">🤖</div>
+          <div>
+            <h2 class="section-title">AI Daily Brief</h2>
+            <p class="section-sub">Updated <span id="briefTime">just now</span></p>
+          </div>
+        </div>
+        <button class="btn-refresh" onclick="refreshData()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+          Refresh
+        </button>
+      </div>
+      <div class="brief-grid" id="briefGrid"></div>
+    </section>
+
+    <!-- YOUR HOLDINGS -->
+    <section class="section">
+      <div class="section-header">
+        <div class="section-title-wrap">
+          <div class="section-icon green">📊</div>
+          <div>
+            <h2 class="section-title">Your Holdings</h2>
+            <p class="section-sub">All halal verified ☪️</p>
+          </div>
+        </div>
+      </div>
+      <div class="holdings-grid" id="holdingsGrid"></div>
+    </section>
+
+    <!-- HALAL STOCK PICKS -->
+    <section class="section">
+      <div class="section-header">
+        <div class="section-title-wrap">
+          <div class="section-icon gold">🔍</div>
+          <div>
+            <h2 class="section-title">Halal Stock Picks</h2>
+            <p class="section-sub">Pre-screened, Shariah-compliant</p>
+          </div>
+        </div>
+        <div class="filter-row">
+          <button class="filter-btn active" data-filter="all" onclick="filterStocks('all', this)">All</button>
+          <button class="filter-btn" data-filter="US" onclick="filterStocks('US', this)">🇺🇸 US</button>
+          <button class="filter-btn" data-filter="UK" onclick="filterStocks('UK', this)">🇬🇧 UK</button>
+          <button class="filter-btn" data-filter="buy" onclick="filterStocks('buy', this)">🟢 Buy Signals</button>
+        </div>
+      </div>
+      <div class="stocks-grid" id="stocksGrid"></div>
+    </section>
+
+    <!-- MARKET PULSE -->
+    <section class="section">
+      <div class="section-header">
+        <div class="section-title-wrap">
+          <div class="section-icon blue">🌍</div>
+          <div>
+            <h2 class="section-title">Market Pulse</h2>
+            <p class="section-sub">US & UK indices today</p>
+          </div>
+        </div>
+      </div>
+      <div class="market-grid" id="marketGrid"></div>
+    </section>
+
+    <!-- LEARN SECTION -->
+    <section class="section">
+      <details class="learn-details">
+        <summary class="learn-summary">
+          <div class="learn-summary-left">
+            <div class="section-icon purple">📚</div>
+            <div>
+              <h2 class="section-title">Understand Your Signals</h2>
+              <p class="section-sub">New to investing? Start here</p>
+            </div>
+          </div>
+          <span class="learn-arrow">▼</span>
+        </summary>
+        <div class="learn-grid" id="learnGrid"></div>
+      </details>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>For educational purposes only. Not financial advice. Always do your own research before investing.</p>
+    <p class="footer-brand">Halal Stocks AI — Built for Muslim investors</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
