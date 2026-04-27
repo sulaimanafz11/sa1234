@@ -358,3 +358,91 @@ button { cursor:pointer; font-family:'Inter',sans-serif; }
   .nav-link span:not(.nav-icon) { display:none; }
   .brand-name { font-size:15px; }
 }
+
+/* ─── ANALYZER PAGE ─────────────────────────────────────────────────────────── */
+.analyzer-wrap { max-width:960px; margin:0 auto; padding:24px 24px 40px; }
+.analyzer-header { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:24px; flex-wrap:wrap; }
+.analyzer-search-row { position:relative; min-width:240px; }
+.az-search-input { width:100%; padding:10px 16px; background:var(--card); border:1px solid var(--border); border-radius:10px; color:var(--text); font-size:14px; outline:none; }
+.az-search-input:focus { border-color:var(--accent); }
+.az-dropdown { position:absolute; top:calc(100% + 6px); left:0; right:0; background:var(--card2); border:1px solid var(--border); border-radius:10px; z-index:200; overflow:hidden; }
+.az-dropdown.hidden { display:none; }
+.az-drop-item { display:flex; align-items:center; gap:8px; padding:10px 14px; cursor:pointer; font-size:13px; }
+.az-drop-item:hover { background:var(--card); }
+.az-drop-emoji { font-size:16px; }
+.az-drop-ticker { font-weight:700; color:var(--accent); min-width:44px; }
+.az-drop-name { color:var(--text2); flex:1; }
+.az-drop-mkt { font-size:11px; color:var(--muted); background:var(--bg2); padding:2px 6px; border-radius:4px; }
+
+/* Hero bar */
+.az-hero { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:20px 24px; border-radius:16px; margin-bottom:20px; flex-wrap:wrap; }
+.az-hero-left { display:flex; align-items:center; gap:16px; }
+.az-hero-emoji { font-size:40px; }
+.az-hero-ticker { font-size:22px; font-weight:800; color:var(--text); }
+.az-hero-market { font-size:13px; font-weight:400; color:var(--muted); }
+.az-hero-name { font-size:14px; color:var(--text2); margin-top:2px; }
+.az-hero-right { display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+.az-hero-price { font-size:28px; font-weight:800; color:var(--text); }
+
+/* Tabs */
+.az-tabs { display:flex; gap:4px; margin-bottom:16px; background:var(--card); padding:4px; border-radius:12px; width:fit-content; }
+.az-tab { padding:8px 18px; border:none; border-radius:9px; background:transparent; color:var(--text2); font-size:13px; font-weight:500; cursor:pointer; transition:all 0.2s; }
+.az-tab.active { background:var(--accent); color:#fff; }
+.az-tab:hover:not(.active) { color:var(--text); background:var(--card2); }
+
+/* Panel & cards */
+.az-panel { animation: fadeSlideUp 0.3s ease both; }
+.az-card { padding:18px 20px; }
+.az-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+@media(max-width:600px){ .az-grid-2 { grid-template-columns:1fr; } }
+.az-explain { color:var(--text2); font-size:13px; margin-top:10px; line-height:1.6; }
+
+/* RSI gauge */
+.rsi-gauge-wrap { margin:14px 0 6px; }
+.rsi-gauge-bar { position:relative; height:20px; background:linear-gradient(90deg,var(--green) 0%,var(--green) 30%,var(--gold) 30%,var(--gold) 70%,var(--red) 70%); border-radius:10px; margin-bottom:4px; }
+.rsi-gauge-fill { position:absolute; top:-4px; width:3px; height:28px; background:#fff; border-radius:2px; transform:translateX(-50%); transition:left 0.5s ease; box-shadow:0 0 8px #fff; }
+.rsi-zone { position:absolute; font-size:10px; color:#000; font-weight:700; top:50%; transform:translateY(-50%); }
+.rsi-os { left:8%; }
+.rsi-ob { right:8%; }
+.rsi-gauge-labels { display:flex; justify-content:space-between; font-size:11px; color:var(--muted); }
+
+/* Moving averages */
+.az-ma-row { display:flex; gap:12px; margin:12px 0; }
+.az-ma-box { flex:1; padding:12px; border:1px solid var(--border); border-radius:10px; text-align:center; }
+.az-ma-val { font-size:16px; font-weight:700; color:var(--text); }
+.az-ma-lbl { font-size:11px; color:var(--muted); margin-top:2px; }
+
+/* Fundamentals grid */
+.az-fund-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+@media(max-width:700px){ .az-fund-grid { grid-template-columns:repeat(2,1fr); } }
+.az-fund-cell { padding:14px 16px; cursor:default; }
+.az-fund-label { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; margin-bottom:6px; }
+.az-fund-val { font-size:18px; font-weight:700; color:var(--text); }
+.az-fund-tip { cursor:help; opacity:0.5; font-size:11px; }
+.az-fund-tip-text { font-size:11px; color:var(--text2); margin-top:4px; display:none; }
+.az-fund-cell:hover .az-fund-tip-text { display:block; }
+
+/* 52-week bar */
+.az-52w-bar-wrap { display:flex; align-items:center; gap:10px; margin:12px 0; }
+.az-52w-lbl { font-size:12px; color:var(--muted); white-space:nowrap; }
+.az-52w-bar { flex:1; height:8px; background:var(--border); border-radius:4px; position:relative; }
+.az-52w-fill { height:100%; background:var(--accent); border-radius:4px; }
+.az-52w-dot { position:absolute; top:50%; transform:translate(-50%,-50%); width:14px; height:14px; background:var(--text); border-radius:50%; border:2px solid var(--accent); }
+
+/* Analyst row */
+.az-analyst-row { display:flex; align-items:center; gap:24px; padding:8px 0; flex-wrap:wrap; }
+.az-analyst-rating { font-size:24px; font-weight:800; }
+.az-analyst-upside { font-size:16px; font-weight:700; }
+
+/* Memo */
+.az-memo-auto { display:flex; flex-direction:column; gap:0; }
+.memo-section { padding:14px 0; border-bottom:1px solid rgba(255,255,255,0.06); }
+.memo-section:last-child { border-bottom:none; }
+.memo-heading { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--accent); margin-bottom:8px; }
+.az-gemini-result { background:var(--bg2); border-radius:10px; padding:16px; font-size:14px; line-height:1.7; color:var(--text2); border:1px solid var(--border); }
+
+/* Sentiment bar (reuse from news) */
+.sentiment-bar { display:flex; height:10px; border-radius:6px; overflow:hidden; gap:2px; }
+.sb-pos { background:var(--green); border-radius:6px 0 0 6px; font-size:0; }
+.sb-neu { background:var(--gold); font-size:0; }
+.sb-neg { background:var(--red); border-radius:0 6px 6px 0; font-size:0; }
