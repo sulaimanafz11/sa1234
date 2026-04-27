@@ -2,22 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>StockIQ — Dashboard</title>
+  <title>StockIQ — AI Chat</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <div class="app-shell">
   <div id="app-nav"></div>
-  <div style="flex:1;display:flex;flex-direction:column;min-width:0">
-    <div class="mkt-ticker" id="mktTicker"></div>
-    <main class="page" id="page"></main>
-    <footer class="page-footer" style="padding:16px 32px">For educational purposes only. Not financial advice. Always research before investing.</footer>
+  <div style="flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden">
+    <main class="page" id="page" style="gap:16px"></main>
   </div>
 </div>
 <script src="shared.js"></script>
-<script src="dashboard.js"></script>
+<script src="chat.js"></script>
 </body>
 </html>
