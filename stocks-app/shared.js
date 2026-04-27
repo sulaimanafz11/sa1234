@@ -284,8 +284,15 @@ function renderSettingsModal() {
               <input type="password" id="inp-t212" placeholder="Your Trading 212 API key..." value="${CONFIG.T212_KEY}">
               <button onclick="toggleVis('inp-t212')">👁</button>
             </div>
-            <span class="input-hint">Settings → API in your Trading 212 app.</span>
-            <div class="cors-warning">⚠️ <strong>Browser limitation:</strong> Trading 212's API blocks direct browser calls (CORS). Your key is saved and ready — but live sync needs a small backend. For now, use the <strong>manual portfolio entry</strong> on the Portfolio page to track your real positions.</div>
+            <span class="input-hint">Settings → API in your Trading 212 app. Make sure you are on the <strong>Invest</strong> account, not CFD.</span>
+            <div class="cors-warning" style="margin-top:10px">
+              <strong>ℹ️ Why can't it connect automatically?</strong><br>
+              Trading 212's API is designed for apps, not websites. When a website tries to call it directly, browsers block it for security (this is called CORS — not a bug in StockIQ, it's a browser rule).<br><br>
+              <strong>What you can do right now:</strong><br>
+              ✅ Use the <a href="portfolio.html" style="color:var(--gold)">Portfolio page</a> to manually add your holdings — it tracks P&L, allocation and growth<br>
+              ✅ Use the Screener and Analyzer to check signals on stocks you own<br>
+              ✅ Your key is saved and ready if a sync feature is added in future
+            </div>
           </div>
 
           <div class="settings-section">

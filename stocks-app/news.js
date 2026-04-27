@@ -113,6 +113,46 @@ function explainImpact(n) {
   return 'Mixed/neutral news. No immediate action needed. Monitor for follow-up developments.';
 }
 
+function renderEconomicCalendar() {
+  const events = [
+    { date:'Mon 29 Apr', time:'15:00',  event:'US Consumer Confidence',        impact:'high',   forecast:'103.5', prev:'104.7', affect:'S&P 500, retail stocks, consumer ETFs' },
+    { date:'Wed 1 May',  time:'19:00',  event:'Fed Interest Rate Decision',    impact:'high',   forecast:'5.25%', prev:'5.25%', affect:'All US stocks — high volatility expected' },
+    { date:'Wed 1 May',  time:'19:30',  event:'Fed Press Conference',          impact:'high',   forecast:'—',     prev:'—',     affect:'Markets move on every word — expect swings' },
+    { date:'Thu 2 May',  time:'13:30',  event:'US Jobless Claims',             impact:'medium', forecast:'212K',  prev:'207K',  affect:'USD, tech stocks, growth sectors' },
+    { date:'Fri 3 May',  time:'13:30',  event:'US Non-Farm Payrolls (NFP)',    impact:'high',   forecast:'+238K', prev:'+303K', affect:'Biggest monthly jobs report — moves all markets' },
+    { date:'Fri 3 May',  time:'13:30',  event:'US Unemployment Rate',         impact:'high',   forecast:'3.8%',  prev:'3.7%',  affect:'All US markets, dollar strength' },
+    { date:'Tue 7 May',  time:'07:00',  event:'UK Halifax House Price Index', impact:'low',    forecast:'+0.2%', prev:'+0.3%', affect:'UK consumer stocks, ULVR, CPG' },
+    { date:'Wed 8 May',  time:'07:00',  event:'UK GDP (Q1 Preliminary)',       impact:'high',   forecast:'+0.4%', prev:'+0.1%', affect:'FTSE 100, UK stocks, GBP/USD' },
+    { date:'Thu 9 May',  time:'12:00',  event:'Bank of England Rate Decision', impact:'high',   forecast:'5.25%','prev':'5.25%',affect:'UK stocks, ISF ETF, FTSE 100' },
+    { date:'Fri 10 May', time:'07:00',  event:'UK Trade Balance',              impact:'low',    forecast:'-£3.2B','prev':'-£3.0B',affect:'GBP currency, import/export stocks' },
+    { date:'Tue 14 May', time:'13:30',  event:'US CPI Inflation',              impact:'high',   forecast:'+3.4%','prev':'+3.5%',affect:'Biggest inflation print — moves all markets' },
+    { date:'Wed 15 May', time:'13:30',  event:'US Retail Sales',               impact:'high',   forecast:'+0.3%','prev':'+0.7%',affect:'Consumer stocks: WMT, COST, NKE, AMZN' },
+  ];
+
+  const impactColor = { high:'var(--red)', medium:'var(--gold)', low:'var(--text3)' };
+
+  return `
+    <div class="chart-box" style="padding:22px;margin-bottom:16px">
+      <div class="section-title" style="margin-bottom:16px">📅 Economic Calendar — Next 2 Weeks</div>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:16px">Key dates that could move markets. High-impact events = expect price swings. Best to avoid new trades on these days unless you're confident.</p>
+      <div class="eco-cal-table">
+        <div class="eco-cal-hd">
+          <span>Date / Time</span><span>Event</span><span>Impact</span><span>Forecast</span><span>Previous</span><span>Affects</span>
+        </div>
+        ${events.map(e => `
+          <div class="eco-cal-row impact-row-${e.impact}">
+            <div class="eco-date"><div>${e.date}</div><div style="color:var(--text3);font-size:11px">${e.time} GMT</div></div>
+            <div class="eco-event">${e.event}</div>
+            <div><span class="eco-impact-pill" style="background:${impactColor[e.impact]}22;color:${impactColor[e.impact]};border:1px solid ${impactColor[e.impact]}44">${e.impact.toUpperCase()}</span></div>
+            <div class="eco-num eco-forecast">${e.forecast}</div>
+            <div class="eco-num" style="color:var(--text3)">${e.prev}</div>
+            <div class="eco-affects">${e.affect}</div>
+          </div>`).join('')}
+      </div>
+      <p style="font-size:11px;color:var(--text3);margin-top:12px">All times in GMT. Forecasts are estimates — actual results drive market moves.</p>
+    </div>`;
+}
+
 function setFilter(f, el) {
   activeFilter = f;
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -125,10 +165,11 @@ function init() {
   renderTicker();
   document.getElementById('page').innerHTML = `
     <div class="page-hd">
-      <div><div class="page-title">Market News</div><div class="page-sub">Today's headlines and what they mean for your stocks</div></div>
+      <div><div class="page-title">Market News</div><div class="page-sub">Headlines, sentiment & upcoming events</div></div>
       <span style="font-size:11px;color:var(--text3)">Demo data · Updates with live API key</span>
     </div>
     ${renderSentimentBar()}
+    ${renderEconomicCalendar()}
     <div class="section">
       <div class="section-hd">
         <div class="section-title">📰 Latest Headlines</div>

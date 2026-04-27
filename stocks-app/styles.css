@@ -446,3 +446,36 @@ button { cursor:pointer; font-family:'Inter',sans-serif; }
 .sb-pos { background:var(--green); border-radius:6px 0 0 6px; font-size:0; }
 .sb-neu { background:var(--gold); font-size:0; }
 .sb-neg { background:var(--red); border-radius:0 6px 6px 0; font-size:0; }
+
+/* ─── SCREENER MODE TABS ────────────────────────────────────────────────────── */
+.screener-mode-tabs { display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap; }
+.smode-tab { display:flex; align-items:center; gap:8px; padding:10px 20px; background:var(--card); border:1px solid var(--border); border-radius:12px; color:var(--text2); font-size:14px; font-weight:600; cursor:pointer; transition:all 0.2s; }
+.smode-tab:hover { border-color:var(--border2); color:var(--text); }
+.smode-tab.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+.smode-count { background:rgba(255,255,255,0.18); border-radius:20px; padding:1px 8px; font-size:11px; font-weight:700; }
+
+/* ─── ETF CARD ──────────────────────────────────────────────────────────────── */
+.etf-card { position:relative; border-color: rgba(167,139,250,0.3); }
+.etf-card:hover { border-color: rgba(167,139,250,0.6) !important; box-shadow: 0 4px 24px rgba(167,139,250,0.15); }
+.etf-badge { position:absolute; top:10px; right:10px; font-size:9px; font-weight:800; letter-spacing:.08em; background:var(--accent); color:#fff; padding:2px 7px; border-radius:6px; }
+.etf-category { font-size:11px; color:var(--accent); font-weight:500; margin-top:3px; }
+
+/* ─── ECONOMIC CALENDAR ─────────────────────────────────────────────────────── */
+.eco-cal-table { display:flex; flex-direction:column; gap:2px; }
+.eco-cal-hd { display:grid; grid-template-columns:130px 1fr 80px 80px 80px 1fr; gap:8px; padding:8px 12px; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text3); border-bottom:1px solid var(--border); }
+.eco-cal-row { display:grid; grid-template-columns:130px 1fr 80px 80px 80px 1fr; gap:8px; padding:10px 12px; border-radius:8px; font-size:13px; transition:background 0.15s; align-items:center; }
+.eco-cal-row:hover { background:var(--bg2); }
+.impact-row-high   { border-left:3px solid var(--red);  }
+.impact-row-medium { border-left:3px solid var(--gold); }
+.impact-row-low    { border-left:3px solid var(--border); }
+.eco-date { font-size:12px; font-weight:600; color:var(--text); line-height:1.4; }
+.eco-event { font-weight:600; color:var(--text); line-height:1.4; }
+.eco-impact-pill { font-size:10px; font-weight:700; padding:2px 8px; border-radius:6px; }
+.eco-num { font-size:13px; font-weight:600; color:var(--text2); }
+.eco-forecast { color:var(--text) !important; }
+.eco-affects { font-size:11px; color:var(--text3); line-height:1.5; }
+@media(max-width:760px){
+  .eco-cal-hd, .eco-cal-row { grid-template-columns:1fr 1fr; }
+  .eco-cal-hd span:nth-child(n+3), .eco-cal-row > div:nth-child(n+3) { display:none; }
+  .eco-event, .eco-date { display:block !important; }
+}
