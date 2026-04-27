@@ -229,6 +229,118 @@ button { cursor:pointer; font-family:'Inter',sans-serif; }
 .tag { font-size:10px; font-weight:600; padding:2px 7px; border-radius:10px; }
 .tag-halal { color:var(--green2); background:rgba(0,208,156,.08); border:1px solid rgba(0,208,156,.2); }
 
+/* ─── ANIMATIONS ────────────────────────────────────────────────────────────── */
+@keyframes fadeSlideUp   { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeIn        { from{opacity:0} to{opacity:1} }
+@keyframes glowPulseGreen{ 0%,100%{box-shadow:0 0 0 0 rgba(0,208,156,0)} 50%{box-shadow:0 0 12px 3px rgba(0,208,156,0.25)} }
+@keyframes glowPulseRed  { 0%,100%{box-shadow:0 0 0 0 rgba(255,79,109,0)} 50%{box-shadow:0 0 12px 3px rgba(255,79,109,0.25)} }
+@keyframes glowPulseGold { 0%,100%{box-shadow:0 0 0 0 rgba(245,166,35,0)} 50%{box-shadow:0 0 12px 3px rgba(245,166,35,0.22)} }
+@keyframes borderSpin    { from{background-position:0% 50%} to{background-position:100% 50%} }
+@keyframes shimmerSlide  { 0%{transform:translateX(-100%)} 100%{transform:translateX(200%)} }
+@keyframes scaleIn       { from{opacity:0;transform:scale(0.94)} to{opacity:1;transform:scale(1)} }
+
+/* Page-load stagger */
+.page > * { animation: fadeSlideUp 0.45s ease both; }
+.page > *:nth-child(1) { animation-delay: 0.05s; }
+.page > *:nth-child(2) { animation-delay: 0.12s; }
+.page > *:nth-child(3) { animation-delay: 0.19s; }
+.page > *:nth-child(4) { animation-delay: 0.26s; }
+.page > *:nth-child(5) { animation-delay: 0.33s; }
+.page > *:nth-child(6) { animation-delay: 0.40s; }
+
+/* Glow on signal pills */
+.pill-buy  { animation: glowPulseGreen 2.4s ease-in-out infinite; }
+.pill-sell { animation: glowPulseRed   2.4s ease-in-out infinite; }
+.pill-watch{ animation: glowPulseGold  2.4s ease-in-out infinite; }
+
+/* Card hover lift */
+.stat-card    { transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease; }
+.stat-card:hover { transform:translateY(-3px); box-shadow:0 8px 32px rgba(0,0,0,0.5); }
+.brief-card   { transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease; }
+.stock-card   { transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease; }
+.holding-row  { transition: transform .18s ease, border-color .18s ease, background .18s ease; }
+.holding-row:hover { transform:translateX(4px); background:var(--card2); }
+
+/* Featured gradient card */
+.card-featured {
+  background: linear-gradient(135deg, #0f1c2e 0%, #142035 50%, #0f1c2e 100%);
+  position: relative;
+  overflow: hidden;
+}
+.card-featured::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(245,166,35,0.04) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+/* Glow border on featured card */
+.card-glow-gold  { box-shadow: 0 0 0 1px rgba(245,166,35,0.25), 0 4px 24px rgba(245,166,35,0.08); }
+.card-glow-green { box-shadow: 0 0 0 1px rgba(0,208,156,0.25), 0 4px 24px rgba(0,208,156,0.08); }
+
+/* Shimmer highlight on load */
+.shimmer-once {
+  position: relative;
+  overflow: hidden;
+}
+.shimmer-once::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 40%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+  animation: shimmerSlide 1.2s ease 0.3s both;
+}
+
+/* Brief card glow by type */
+.brief-card.buy  { box-shadow: 0 0 0 1px rgba(0,208,156,0.15); }
+.brief-card.buy:hover  { box-shadow: 0 0 0 1px rgba(0,208,156,0.35), 0 8px 32px rgba(0,208,156,0.1); }
+.brief-card.sell { box-shadow: 0 0 0 1px rgba(255,79,109,0.15); }
+.brief-card.sell:hover { box-shadow: 0 0 0 1px rgba(255,79,109,0.35), 0 8px 32px rgba(255,79,109,0.1); }
+.brief-card.watch{ box-shadow: 0 0 0 1px rgba(245,166,35,0.15); }
+.brief-card.watch:hover{ box-shadow: 0 0 0 1px rgba(245,166,35,0.35), 0 8px 32px rgba(245,166,35,0.1); }
+
+/* Animated number (JS adds class) */
+.count-up { transition: all 0.8s cubic-bezier(0.22,1,0.36,1); }
+
+/* Nav active glow */
+.nav-link.active { text-shadow: 0 0 12px rgba(245,166,35,0.4); }
+
+/* Glassmorphism modal */
+.modal {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background: rgba(14, 28, 46, 0.92) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+}
+
+/* RSI bar */
+.rsi-track { height:4px; background:var(--border); border-radius:2px; overflow:hidden; margin-top:4px; }
+.rsi-fill  { height:100%; border-radius:2px; transition: width 1s cubic-bezier(0.22,1,0.36,1); }
+
+/* Trend badge */
+.trend-up   { color:var(--green); font-size:11px; font-weight:700; }
+.trend-down { color:var(--red);   font-size:11px; font-weight:700; }
+
+/* Connection test */
+.btn-test { font-size:11px; font-weight:600; color:var(--text2); background:var(--bg2); border:1px solid var(--border); border-radius:6px; padding:5px 12px; margin-top:6px; transition:var(--t); }
+.btn-test:hover { color:var(--text); border-color:var(--border2); }
+.conn-status { margin-top:6px; font-size:12px; min-height:18px; }
+.conn-ok   { color:var(--green); font-weight:600; }
+.conn-fail { color:var(--red);   font-weight:600; }
+.conn-warn { color:var(--gold);  font-weight:600; }
+.cors-warning { font-size:11px; color:var(--gold); background:rgba(245,166,35,0.07); border:1px solid rgba(245,166,35,0.2); border-radius:6px; padding:10px 12px; margin-top:8px; line-height:1.5; }
+
+/* Brief card detail rows */
+.brief-detail-row { display:flex; gap:12px; flex-wrap:wrap; }
+.brief-detail-item { display:flex; flex-direction:column; gap:2px; }
+.brief-detail-label { font-size:9px; color:var(--text3); text-transform:uppercase; letter-spacing:.5px; }
+.brief-detail-val   { font-size:13px; font-weight:700; }
+
+/* Scrollbar for ticker */
+.mkt-ticker::-webkit-scrollbar { display:none; }
+
 /* ─── RESPONSIVE ───────────────────────────────────────────────────────────── */
 @media (max-width:768px) {
   #app-nav { width:100%; min-height:auto; height:auto; flex-direction:row; padding:10px 14px; border-right:none; border-bottom:1px solid var(--border); position:sticky; top:0; z-index:50; overflow-x:auto; gap:0; }

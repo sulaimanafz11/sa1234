@@ -33,28 +33,49 @@ function portfolioStats() {
   return { total, invested, cash, pl, plPct };
 }
 
+function countUp(el, target, prefix='£', decimals=2, duration=1200) {
+  if (!el) return;
+  const start = Date.now();
+  const tick = () => {
+    const progress = Math.min((Date.now() - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - progress, 4);
+    el.textContent = prefix + (target * ease).toFixed(decimals);
+    if (progress < 1) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+
 function renderHero(stats) {
   const plCls  = stats.pl >= 0 ? 'pos' : 'neg';
   const plSign = stats.pl >= 0 ? '+' : '';
   return `
     <div class="stat-row">
-      <div class="stat-card" style="grid-column:span 2;background:linear-gradient(135deg,#0f1c2e,#142035);border-color:var(--border2)">
-        <div class="stat-label">Total Portfolio Value</div>
-        <div class="stat-val" style="font-size:36px">£${stats.total.toFixed(2)}</div>
-        <div class="stat-change ${plCls}" style="margin-top:8px">
-          ${plSign}£${Math.abs(stats.pl).toFixed(2)} &nbsp; ${plSign}${stats.plPct.toFixed(2)}% all time
+      <div class="stat-card card-featured card-glow-gold shimmer-once" style="grid-column:span 2">
+        <div class="stat-label" style="font-size:12px;letter-spacing:.5px">TOTAL PORTFOLIO VALUE</div>
+        <div id="hero-val" class="stat-val count-up" style="font-size:40px;letter-spacing:-1.5px;margin:8px 0">£0.00</div>
+        <div class="stat-change ${plCls}" style="font-size:14px;padding:5px 12px">
+          ${plSign}£${Math.abs(stats.pl).toFixed(2)} &nbsp;·&nbsp; ${plSign}${stats.plPct.toFixed(2)}% all time
         </div>
-        <div style="font-size:11px;color:var(--text3);margin-top:6px">${CONFIG.demoMode ? '⚠ Demo data — add API keys in Settings for live prices' : '● Live data'}</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:10px">
+          <span style="width:6px;height:6px;border-radius:50%;background:${CONFIG.demoMode?'var(--gold)':'var(--green)'};display:inline-block"></span>
+          <span style="font-size:11px;color:var(--text3)">${CONFIG.demoMode ? 'Demo data — add Alpha Vantage key in Settings for live prices' : 'Live data connected'}</span>
+          ${CONFIG.demoMode ? '<button class="btn-test" style="margin:0;padding:3px 10px" onclick="openSettings()">Connect</button>' : ''}
+        </div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Cash Available</div>
-        <div class="stat-val">£${stats.cash.toFixed(2)}</div>
+        <div id="hero-cash" class="stat-val count-up" style="font-size:22px">£0.00</div>
         <div style="font-size:11px;color:var(--text3);margin-top:6px">Ready to invest</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Invested</div>
-        <div class="stat-val">£${stats.invested.toFixed(2)}</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:6px">${PORTFOLIO.length} holdings</div>
+        <div id="hero-inv" class="stat-val count-up" style="font-size:22px">£0.00</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:6px">${PORTFOLIO.length} positions</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">All-time Return</div>
+        <div class="stat-val ${plCls}" style="font-size:22px">${plSign}${stats.plPct.toFixed(2)}%</div>
+        <div class="stat-change ${plCls}" style="margin-top:6px">${plSign}£${Math.abs(stats.pl).toFixed(2)}</div>
       </div>
     </div>`;
 }
@@ -72,6 +93,12 @@ function renderPortfolioChart() {
     </div>`;
 }
 
+function rsiColor(rsi) {
+  if (rsi < 35) return 'var(--green)';
+  if (rsi > 65) return 'var(--red)';
+  return 'var(--gold)';
+}
+
 function renderBrief() {
   const top = [...STOCKS].sort((a, b) => {
     const order = {'STRONG BUY':0,'BUY':1,'STRONG SELL':2,'SELL':3,'WATCH':4,'HOLD':5};
@@ -79,28 +106,69 @@ function renderBrief() {
   }).slice(0, 3);
 
   const cards = top.map((s, i) => {
-    const sig = getSignal(s);
-    const cur = getCurrency(s.market);
+    const sig      = getSignal(s);
+    const cur      = getCurrency(s.market);
+    const trendUp  = s.ma20 > s.ma50;
+    const chgCls   = s.chg >= 0 ? 'pos' : 'neg';
+    const rsiCol   = rsiColor(s.rsi);
+    const rsiLabel = s.rsi < 35 ? 'Oversold' : s.rsi > 65 ? 'Overbought' : 'Neutral';
     return `
-      <div class="brief-card ${sig.cls}" onclick="window.location='screener.html'">
+      <div class="brief-card ${sig.cls} shimmer-once" onclick="window.location='screener.html?ticker=${s.ticker}'" style="cursor:pointer">
         <div class="brief-top">
-          <div>
-            <span class="pill pill-${sig.cls}">${sig.signal}</span>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="pill pill-${sig.cls}">${sig.signal}</span>
+              <span style="font-size:11px;color:var(--text3)">${s.market === 'US' ? '🇺🇸' : '🇬🇧'} ${s.sector}</span>
+            </div>
             <div class="brief-ticker">${s.ticker}</div>
           </div>
           <div class="conf-wrap">
             <span class="conf-label">Confidence</span>
             <div class="conf-bar"><div class="conf-fill ${sig.cls}" style="width:${sig.conf}%"></div></div>
-            <span style="font-size:10px;color:var(--text2);font-weight:600">${sig.conf}%</span>
+            <span style="font-size:11px;color:var(--text2);font-weight:700;margin-top:1px">${sig.conf}%</span>
           </div>
         </div>
         <div class="brief-name">${s.name}</div>
         <div class="brief-reason">${getSignalReason(s)}</div>
-        <div class="brief-price-row">
-          <span class="brief-price">${cur}${s.price.toFixed(2)}</span>
-          <span class="${s.chg >= 0 ? 'pos' : 'neg'}" style="font-size:12px;font-weight:600">${fmtPct(s.chg)} today</span>
+
+        <div class="brief-detail-row">
+          <div class="brief-detail-item">
+            <span class="brief-detail-label">Price</span>
+            <span class="brief-detail-val">${cur}${s.price.toFixed(2)}</span>
+          </div>
+          <div class="brief-detail-item">
+            <span class="brief-detail-label">Today</span>
+            <span class="brief-detail-val ${chgCls}">${fmtPct(s.chg)}</span>
+          </div>
+          <div class="brief-detail-item">
+            <span class="brief-detail-label">Volume</span>
+            <span class="brief-detail-val">${s.vol}</span>
+          </div>
+          <div class="brief-detail-item">
+            <span class="brief-detail-label">Mkt Cap</span>
+            <span class="brief-detail-val">${s.mktCap}</span>
+          </div>
         </div>
-        <canvas id="brief-chart-${i}" style="height:36px;display:block"></canvas>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+          <div style="flex:1">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+              <span style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px">RSI · ${rsiLabel}</span>
+              <span style="font-size:11px;font-weight:700;color:${rsiCol}">${s.rsi}</span>
+            </div>
+            <div class="rsi-track"><div class="rsi-fill" style="width:${s.rsi}%;background:${rsiCol}"></div></div>
+          </div>
+          <span class="${trendUp ? 'trend-up' : 'trend-down'}">${trendUp ? '↗ Uptrend' : '↘ Downtrend'}</span>
+        </div>
+
+        <div style="height:48px;position:relative;margin:0 -4px">
+          <canvas id="brief-chart-${i}"></canvas>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;padding-top:8px;border-top:1px solid var(--border)">
+          <span style="font-size:11px;color:var(--text3)">MA20: ${cur}${s.ma20} · MA50: ${cur}${s.ma50}</span>
+          <span style="font-size:11px;font-weight:600;color:var(--gold)">View Analysis →</span>
+        </div>
       </div>`;
   }).join('');
 
@@ -251,6 +319,14 @@ function init() {
     renderMarket(),
     renderQuickLinks(),
   ].join('');
+
+  // Animated count-up on hero numbers
+  setTimeout(() => {
+    countUp(document.getElementById('hero-val'),  stats.total,    '£', 2, 1400);
+    countUp(document.getElementById('hero-cash'), stats.cash,     '£', 2, 1000);
+    countUp(document.getElementById('hero-inv'),  stats.invested, '£', 2, 1200);
+  }, 150);
+
   setTimeout(drawCharts, 80);
 }
 

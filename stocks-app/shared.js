@@ -96,11 +96,23 @@ function sparkData(trend = 'up', pts = 14) {
 function makeSparkline(id, trend, color) {
   const el = document.getElementById(id);
   if (!el || !window.Chart) return;
+  // Destroy existing chart on canvas if any
+  const existing = Chart.getChart(el);
+  if (existing) existing.destroy();
   const data = sparkData(trend);
+  const mn = Math.min(...data), mx = Math.max(...data), pad = (mx - mn) * 0.15 || 1;
+  const rgba = color.startsWith('rgb(')
+    ? color.replace('rgb(', 'rgba(').replace(')', ', 0.08)')
+    : color;
   new Chart(el, {
     type: 'line',
-    data: { labels: data.map((_, i) => i), datasets: [{ data, borderColor: color, borderWidth: 1.5, fill: true, backgroundColor: color.replace('rgb(', 'rgba(').replace(')', ',0.07)'), tension: 0.4, pointRadius: 0 }] },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } }, scales: { x: { display: false }, y: { display: false } }, animation: { duration: 600 } }
+    data: { labels: data.map((_, i) => i), datasets: [{ data, borderColor: color, borderWidth: 1.5, fill: true, backgroundColor: rgba, tension: 0.4, pointRadius: 0 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { enabled: false } },
+      scales: { x: { display: false }, y: { display: false, min: mn - pad, max: mx + pad } },
+      animation: { duration: 800, easing: 'easeInOutQuart' }
+    }
   });
 }
 
@@ -177,42 +189,94 @@ function renderSettingsModal() {
           <button class="modal-close" onclick="closeSettings()">✕</button>
         </div>
         <div class="modal-bd">
-          <div class="settings-section">
-            <div class="settings-label">📊 Trading 212 <span class="tag-optional">optional</span></div>
-            <div class="input-row">
-              <input type="password" id="inp-t212" placeholder="Your Trading 212 API key..." value="${CONFIG.T212_KEY}">
-              <button onclick="toggleVis('inp-t212')">👁</button>
-            </div>
-            <span class="input-hint">Settings → API in your Trading 212 app. Note: browser security may limit direct connection.</span>
-          </div>
+
           <div class="settings-section">
             <div class="settings-label">📈 Alpha Vantage <span class="tag-free">FREE</span></div>
             <div class="input-row">
               <input type="password" id="inp-av" placeholder="Your Alpha Vantage key..." value="${CONFIG.AV_KEY}">
               <button onclick="toggleVis('inp-av')">👁</button>
             </div>
-            <span class="input-hint">Get free key at alphavantage.co — real stock prices & technical data</span>
+            <span class="input-hint">Get free key at <strong>alphavantage.co</strong> — real stock prices. Free = 25 calls/day.</span>
+            <button class="btn-test" id="test-av-btn" onclick="testAV()">Test Connection</button>
+            <div id="av-status" class="conn-status"></div>
           </div>
+
           <div class="settings-section">
-            <div class="settings-label">🤖 Google Gemini <span class="tag-free">FREE</span></div>
+            <div class="settings-label">📊 Trading 212 <span class="tag-opt">optional</span></div>
+            <div class="input-row">
+              <input type="password" id="inp-t212" placeholder="Your Trading 212 API key..." value="${CONFIG.T212_KEY}">
+              <button onclick="toggleVis('inp-t212')">👁</button>
+            </div>
+            <span class="input-hint">Settings → API in your Trading 212 app.</span>
+            <div class="cors-warning">⚠️ <strong>Browser limitation:</strong> Trading 212's API blocks direct browser calls (CORS). Your key is saved and ready — but live sync needs a small backend. For now, use the <strong>manual portfolio entry</strong> on the Portfolio page to track your real positions.</div>
+          </div>
+
+          <div class="settings-section">
+            <div class="settings-label">🤖 Google Gemini AI <span class="tag-free">FREE</span></div>
             <div class="input-row">
               <input type="password" id="inp-gemini" placeholder="Your Gemini API key..." value="${CONFIG.GEMINI_KEY}">
               <button onclick="toggleVis('inp-gemini')">👁</button>
             </div>
-            <span class="input-hint">Get free key at aistudio.google.com — powers the AI Chat (1M tokens/day free)</span>
+            <span class="input-hint">Get free key at <strong>aistudio.google.com</strong> — 1M tokens/day free, no card needed.</span>
+            <button class="btn-test" id="test-gemini-btn" onclick="testGemini()">Test Connection</button>
+            <div id="gemini-status" class="conn-status"></div>
           </div>
-          <button class="btn-save" onclick="saveSettings()">Save & Apply</button>
-          <p class="modal-note">🔒 Keys stored locally on your device only. Never uploaded anywhere.</p>
-          <hr style="border-color:var(--border);margin:8px 0">
-          <div class="settings-section">
-            <div class="settings-label">⚠️ Visibility</div>
-            <p class="input-hint">This app is on a public URL. Anyone with the link can view it. To make it private you'd need a paid GitHub plan or a different hosting service.</p>
-          </div>
+
+          <button class="btn-save" onclick="saveSettings()">💾 Save & Reload</button>
+          <p class="modal-note">🔒 Keys stored on your device only. Never sent anywhere except their own APIs.</p>
         </div>
       </div>
     </div>
   `;
   document.body.appendChild(div.firstElementChild);
+}
+
+async function testAV() {
+  const key = document.getElementById('inp-av').value.trim();
+  const status = document.getElementById('av-status');
+  const btn = document.getElementById('test-av-btn');
+  if (!key) { status.innerHTML = '<span class="conn-fail">⚠ Enter a key first</span>'; return; }
+  btn.textContent = 'Testing…'; btn.disabled = true;
+  status.innerHTML = '';
+  try {
+    const r = await fetch(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=AAPL&apikey=${key}`);
+    const d = await r.json();
+    if (d['Global Quote']?.['05. price']) {
+      status.innerHTML = `<span class="conn-ok">✓ Connected — AAPL: $${parseFloat(d['Global Quote']['05. price']).toFixed(2)}</span>`;
+    } else if (d.Note || d.Information) {
+      status.innerHTML = `<span class="conn-warn">⚠ Key valid but rate limited (25 calls/day). Try again later.</span>`;
+    } else {
+      status.innerHTML = `<span class="conn-fail">✗ Invalid key or API error</span>`;
+    }
+  } catch(e) {
+    status.innerHTML = `<span class="conn-fail">✗ Network error — check your internet</span>`;
+  }
+  btn.textContent = 'Test Connection'; btn.disabled = false;
+}
+
+async function testGemini() {
+  const key = document.getElementById('inp-gemini').value.trim();
+  const status = document.getElementById('gemini-status');
+  const btn = document.getElementById('test-gemini-btn');
+  if (!key) { status.innerHTML = '<span class="conn-fail">⚠ Enter a key first</span>'; return; }
+  btn.textContent = 'Testing…'; btn.disabled = true;
+  try {
+    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ contents:[{ parts:[{ text:'Say "StockIQ connected" in 3 words.' }] }] })
+    });
+    const d = await r.json();
+    if (d.candidates?.[0]?.content?.parts?.[0]?.text) {
+      status.innerHTML = `<span class="conn-ok">✓ Gemini AI connected successfully</span>`;
+    } else if (r.status === 400) {
+      status.innerHTML = `<span class="conn-fail">✗ Invalid API key</span>`;
+    } else {
+      status.innerHTML = `<span class="conn-fail">✗ Error ${r.status}</span>`;
+    }
+  } catch(e) {
+    status.innerHTML = `<span class="conn-fail">✗ Network error</span>`;
+  }
+  btn.textContent = 'Test Connection'; btn.disabled = false;
 }
 
 function openSettings()  { document.getElementById('settings-modal')?.classList.add('open'); }
