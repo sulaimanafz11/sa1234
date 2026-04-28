@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Tools Atlas — NEXUS</title>
+<link rel="stylesheet" href="styles-hub.css">
+</head>
+<body>
+
+<header id="app-nav" class="app-nav"></header>
+
+<main class="page" id="page">
+  <div class="hero">
+    <span class="page-eyebrow">Atlas · 50+ AI Tools</span>
+    <h1>Every AI tool worth knowing,<br>in one searchable map.</h1>
+    <p>Chat models, coding copilots, image &amp; video generators, audio, automation, research, writing. Filter by category, click any tool for strengths, weaknesses, pricing, and the killer use case.</p>
+  </div>
+
+  <div class="filter-bar">
+    <input type="text" class="search-box" id="search" placeholder="Search tools (e.g. image, code, agent)..." oninput="filterTools()">
+    <button class="filter-chip active" data-cat="all" onclick="setCat('all')">All</button>
+    <button class="filter-chip" data-cat="chat" onclick="setCat('chat')">Chat</button>
+    <button class="filter-chip" data-cat="code" onclick="setCat('code')">Code</button>
+    <button class="filter-chip" data-cat="image" onclick="setCat('image')">Image</button>
+    <button class="filter-chip" data-cat="video" onclick="setCat('video')">Video</button>
+    <button class="filter-chip" data-cat="audio" onclick="setCat('audio')">Audio</button>
+    <button class="filter-chip" data-cat="agent" onclick="setCat('agent')">Agents</button>
+    <button class="filter-chip" data-cat="research" onclick="setCat('research')">Research</button>
+  </div>
+
+  <div class="grid grid-3" id="grid"></div>
+
+  <div id="modal-bg" class="modal-bg" onclick="closeTool()">
+    <div class="modal" onclick="event.stopPropagation()" id="tool-modal"></div>
+  </div>
+</main>
+
+<footer id="app-foot" class="foot"></footer>
+
+<script src="shared-hub.js"></script>
+<script src="hub-tools-data.js"></script>
+<script src="hub-tools.js"></script>
+<script>sharedInit('tools'); renderTools();</script>
+</body>
+</html>
