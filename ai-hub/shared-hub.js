@@ -30,7 +30,7 @@ function renderNav(activePage) {
     <div class="nav-brand">
       <div class="logo">N</div>
       <span class="brand-name">NEX<span class="brand-accent">US</span></span>
-      <span class="brand-tag">AI Bible</span>
+      <span class="brand-tag">AI Manual</span>
     </div>
     <nav class="nav-links">
       ${NAV_PAGES.map(p => `
@@ -97,7 +97,7 @@ function renderFooter() {
   const f = document.getElementById('app-foot');
   if (!f) return;
   f.innerHTML = `
-    <div>NEXUS — Your AI Bible · curated April 2026 · client-side only · your data stays in your browser</div>
+    <div>NEXUS — Your AI Manual · curated April 2026 · client-side only · your data stays in your browser</div>
     <div>Built with Claude Code · Gemini powers the tutor (free)</div>`;
 }
 
