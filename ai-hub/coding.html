@@ -18,10 +18,151 @@
   </div>
 
   <div class="callout violet">
-    <strong>The lazy answer:</strong> if you're a non-coder who wants a real web app live by Friday — start with <strong>Lovable</strong> or <strong>v0</strong>. If you want to learn while building — <strong>Cursor</strong> or <strong>Claude Code</strong>. Full breakdown below.
+    <strong>The lazy answer:</strong> non-coder who wants a real web app live by Friday → start with <strong>Lovable</strong>. Want to learn while building → <strong>Cursor</strong>. Already a developer wanting deep agentic help → <strong>Claude Code</strong>. Just want fast autocomplete in your existing IDE → <strong>Copilot</strong>.
   </div>
 
-  <p class="muted center" style="margin-top:48px">More sections coming — tool-by-tool breakdown, decision tree, repo setup, CLAUDE.md essentials.</p>
+  <div class="section">
+    <div class="section-h">Comparison</div>
+    <h2 class="section-title">Tool by tool, plain English</h2>
+
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-icon">⌬</div>
+        <div class="card-h">Claude Code</div>
+        <div class="card-sub">Anthropic · CLI + IDE + Web</div>
+        <p class="muted" style="font-size:13.5px">Agentic coding tool. Reads whole codebases, makes multi-file edits, runs tests, uses skills/MCP/subagents. Best for real engineering work, refactors, large features.</p>
+        <div style="margin-top:10px"><span class="tag green">Power</span> <span class="tag cyan">Pro plan</span></div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎯</div>
+        <div class="card-h">Cursor</div>
+        <div class="card-sub">AI-native VS Code fork</div>
+        <p class="muted" style="font-size:13.5px">Day-to-day coding with inline chat, tab completion, multi-file edits. Familiar VS Code UX. The most popular paid AI editor of 2025.</p>
+        <div style="margin-top:10px"><span class="tag green">Polish</span> <span class="tag cyan">£16/mo</span></div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🐙</div>
+        <div class="card-h">GitHub Copilot</div>
+        <div class="card-sub">In any IDE you already use</div>
+        <p class="muted" style="font-size:13.5px">Inline autocomplete + chat. Cheapest. Works everywhere. Great for "I know what I'm doing, just type it faster." Less powerful for big edits.</p>
+        <div style="margin-top:10px"><span class="tag green">Cheap</span> <span class="tag cyan">£8/mo</span></div>
+      </div>
+      <div class="card">
+        <div class="card-icon">💗</div>
+        <div class="card-h">Lovable</div>
+        <div class="card-sub">Prompt → real web app</div>
+        <p class="muted" style="font-size:13.5px">Non-coder friendly. Describe an app, get a working React + Supabase project. Auth, DB, deploy. Hits a ceiling on complex apps but unbeatable for MVPs.</p>
+        <div style="margin-top:10px"><span class="tag violet">No-code</span> <span class="tag cyan">£20/mo</span></div>
+      </div>
+      <div class="card">
+        <div class="card-icon">▲</div>
+        <div class="card-h">v0</div>
+        <div class="card-sub">Vercel · UI from a prompt</div>
+        <p class="muted" style="font-size:13.5px">Generate React + Tailwind components / landing pages. Best UI quality of any prompt-to-code tool. Less full-stack than Lovable.</p>
+        <div style="margin-top:10px"><span class="tag violet">UI focus</span> <span class="tag cyan">£20/mo</span></div>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚡</div>
+        <div class="card-h">Bolt</div>
+        <div class="card-sub">StackBlitz · full-stack in browser</div>
+        <p class="muted" style="font-size:13.5px">Spin up Next.js / Astro apps in seconds. Browser dev environment, hot reload. Like Lovable but more developer-feeling.</p>
+        <div style="margin-top:10px"><span class="tag violet">Browser IDE</span> <span class="tag cyan">£20/mo</span></div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🟧</div>
+        <div class="card-h">Replit Agent</div>
+        <div class="card-sub">Build &amp; deploy in one tab</div>
+        <p class="muted" style="font-size:13.5px">Beginner pipeline: prompt → working app → live URL. Includes hosting and DB. Performance limits on free tier.</p>
+        <div style="margin-top:10px"><span class="tag violet">All-in-one</span> <span class="tag cyan">£20/mo</span></div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🌊</div>
+        <div class="card-h">Windsurf</div>
+        <div class="card-sub">Codeium · agentic IDE</div>
+        <p class="muted" style="font-size:13.5px">Cursor alternative with stronger agentic mode (cascade) and a more generous free tier. Smaller community.</p>
+        <div style="margin-top:10px"><span class="tag green">Free tier</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-h">Decision tree</div>
+    <h2 class="section-title">Which one for me?</h2>
+    <div class="lesson">
+      <ol>
+        <li>Are you a non-coder? → <strong>Lovable</strong> (full app) or <strong>v0</strong> (just UI). Done.</li>
+        <li>Are you already a developer using VS Code daily? → <strong>Cursor</strong> for everyday, add <strong>Claude Code</strong> for big agentic tasks (refactors, multi-file features).</li>
+        <li>You want the cheapest AI in your existing IDE (JetBrains, Vim, etc.)? → <strong>Copilot</strong> at £8/mo.</li>
+        <li>You want to ship a Next.js MVP in a weekend, browser-based? → <strong>Bolt</strong>.</li>
+        <li>You want a hosted "I'll just describe it and click deploy" experience? → <strong>Replit Agent</strong>.</li>
+        <li>You want a generous free tier with agentic capabilities? → <strong>Windsurf</strong>.</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-h">Setup that pays off</div>
+    <h2 class="section-title">CLAUDE.md and .cursorrules — the killer move</h2>
+    <div class="lesson">
+      <p>Both Claude Code and Cursor read a project-specific instructions file on every session. Spending 10 minutes on this saves you from re-explaining your project on every prompt.</p>
+      <h4>What to put in it</h4>
+      <ul>
+        <li><strong>Stack</strong> — language, framework, runtime versions</li>
+        <li><strong>Conventions</strong> — naming, formatting rules, file layout</li>
+        <li><strong>Test command</strong> — how to run tests in one line</li>
+        <li><strong>What NOT to do</strong> — files / patterns to never touch</li>
+        <li><strong>Domain glossary</strong> — what your acronyms mean</li>
+      </ul>
+      <div class="recipe">
+        <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+<pre># Project: [NAME]
+
+## Stack
+- Language: [TypeScript / Python / Ruby]
+- Framework: [Next.js 15 / FastAPI / Rails 7]
+- DB: [Postgres via Prisma]
+- Test: `pnpm test`
+
+## Conventions
+- Components: PascalCase, one per file, in `src/components/`
+- Hooks: `useFoo.ts` in `src/hooks/`
+- Server code: in `src/server/`
+- No default exports
+- Tailwind only — no CSS modules
+
+## Don't do
+- Don't run `npm install` — we use pnpm
+- Don't touch `src/legacy/*`
+- Don't add new dependencies without asking
+
+## Glossary
+- "Order" = a customer purchase (not the SQL ORDER BY)
+- "Account" = the org-level entity, "User" is per-person</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-h">Workflow</div>
+    <h2 class="section-title">Ship something this week</h2>
+    <div class="lesson">
+      <ol>
+        <li><strong>Day 1</strong> — pick the tool (use the tree above), install/sign up, get a "hello world" working.</li>
+        <li><strong>Day 2</strong> — pick a tiny real project. Examples: a habit tracker, a recipe saver, a stock signal page (like the StockIQ folder in this repo).</li>
+        <li><strong>Day 3</strong> — write the CLAUDE.md / .cursorrules. Then prompt: <em>"Plan out the MVP in 5–8 features, smallest first."</em></li>
+        <li><strong>Day 4–5</strong> — build feature by feature. Always plan-then-do (see <a href="prompting.html">Prompting Mastery</a>).</li>
+        <li><strong>Day 6</strong> — deploy. Vercel for frontend, Supabase for backend, both have generous free tiers.</li>
+        <li><strong>Day 7</strong> — share it. Post the URL on X / LinkedIn. Counts as a portfolio piece.</li>
+      </ol>
+      <div class="callout">
+        <strong>The single biggest mistake:</strong> trying to one-shot a whole app in a single prompt. Even the best models do better in small steps with feedback. Ship one feature, run it, fix it, ship the next.
+      </div>
+    </div>
+  </div>
+
+  <div class="callout violet" style="margin-top:48px">
+    <strong>Next.</strong> Once you can build apps, the next leap is making them <em>do things on their own</em>. That's <a href="agents.html">Agentic Workflows</a>. Or jump to <a href="business.html">Make Money with AI</a> for how to turn this into income.
+  </div>
 </main>
 
 <footer id="app-foot" class="foot"></footer>

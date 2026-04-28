@@ -18,10 +18,145 @@
   </div>
 
   <div class="callout">
-    <strong>The 30-second version.</strong> If you want a <em>visual canvas</em> like every YouTube video — use <strong>n8n</strong> (free, self-host or cloud). If you want code-based agents you fully control — <strong>Claude Agent SDK</strong>. If you want an agent that just does the work for you in a browser — <strong>Manus</strong>. If you live inside Claude Code already — use <strong>subagents, skills, hooks, MCP</strong>.
+    <strong>The 30-second version.</strong> Want a <em>visual canvas</em> like every YouTube video → <strong>n8n</strong>. Code-based agents you fully control → <strong>Claude Agent SDK</strong>. An agent that just does the work in a browser → <strong>Manus</strong>. Live inside Claude Code already → <strong>subagents, skills, hooks, MCP</strong>.
   </div>
 
-  <p class="muted center" style="margin-top:48px">More sections coming — what an agent is, n8n deep dive, three starter workflows you can copy.</p>
+  <div class="section">
+    <div class="section-h">Lesson 1</div>
+    <h2 class="section-title">What an agent actually is</h2>
+    <div class="lesson">
+      <p>An <strong>agent</strong> is just an AI in a loop with two extra things: <strong>tools</strong> (the ability to call APIs / read files / send messages) and <strong>memory</strong> (the ability to keep going across multiple steps).</p>
+      <h4>The loop</h4>
+      <ol>
+        <li>Receive a goal ("qualify this lead")</li>
+        <li>Decide what to do next (call CRM? search web? draft email?)</li>
+        <li>Use a tool to do it</li>
+        <li>Look at the result</li>
+        <li>Decide if done, or go back to step 2</li>
+      </ol>
+      <p>That's it. Everything else — n8n, MCP, skills, ReAct, planning — is implementation detail around this loop.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-h">Lesson 2</div>
+    <h2 class="section-title">The four shapes of agent</h2>
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-icon">🔗</div>
+        <div class="card-h">Visual canvas (n8n / Make / Zapier)</div>
+        <p class="muted" style="font-size:13.5px">Drag nodes, wire them. Trigger → AI step → tool call → output. <strong>What 90% of YouTube videos show.</strong></p>
+        <p class="muted" style="font-size:13.5px"><strong>Pick if</strong>: you want speed without code, integration with hundreds of apps out of the box, and to share/sell flows.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🧠</div>
+        <div class="card-h">Code SDK (Claude Agent SDK / OpenAI Agents)</div>
+        <p class="muted" style="font-size:13.5px">Write the agent in Python or TypeScript. Define tools as functions. Deploy anywhere.</p>
+        <p class="muted" style="font-size:13.5px"><strong>Pick if</strong>: you can code, want full control, need custom logic that visual tools struggle with.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🤖</div>
+        <div class="card-h">Browser agent (Manus, OpenAI Operator)</div>
+        <p class="muted" style="font-size:13.5px">Hand it a task in plain English. It opens a browser, clicks, types, fills forms — like a remote worker.</p>
+        <p class="muted" style="font-size:13.5px"><strong>Pick if</strong>: the work is clicky / repetitive on websites that don't have APIs.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⌬</div>
+        <div class="card-h">Inside Claude Code (subagents / skills / hooks / MCP)</div>
+        <p class="muted" style="font-size:13.5px">Your coding agent gets richer abilities. Subagents handle parallel research. Skills add reusable knowledge. Hooks fire on events. MCP gives it tools.</p>
+        <p class="muted" style="font-size:13.5px"><strong>Pick if</strong>: you live in Claude Code and want to extend it, not replace it.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-h">Lesson 3</div>
+    <h2 class="section-title">n8n — the YouTube favourite</h2>
+    <div class="lesson">
+      <h3>Why every creator uses it</h3>
+      <ul>
+        <li>Free if you self-host. £18/mo cloud if you don't want to.</li>
+        <li>400+ integrations out of the box (Gmail, Slack, Sheets, Airtable, Notion, X…)</li>
+        <li>The visual nodes look great on camera</li>
+        <li>You can sell flows as templates (creators do)</li>
+      </ul>
+      <h4>How an n8n agent flow looks</h4>
+      <pre><code>[ Schedule trigger: every hour ]
+        ↓
+[ Read Gmail: unread inbox ]
+        ↓
+[ AI Agent node: classify → "lead" / "spam" / "support" ]
+        ↓
+[ Switch ]
+   ├── Lead → [ Add to CRM ] → [ Slack ping ]
+   ├── Spam → [ Trash ]
+   └── Support → [ Reply with template ]</code></pre>
+      <h4>Two-hour starter path</h4>
+      <ol>
+        <li>Sign up at <a href="https://n8n.io" target="_blank">n8n.io</a> cloud (or self-host with Docker).</li>
+        <li>Create a workflow → drag a "Manual trigger" → add an "AI Agent" node → connect OpenAI / Anthropic.</li>
+        <li>Try the prompt: <em>"You are a research assistant. When given a company name, find their website, summarise what they do in 2 sentences."</em></li>
+        <li>Add an "HTTP Request" tool to the agent so it can fetch URLs.</li>
+        <li>Run it. Iterate.</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-h">Lesson 4</div>
+    <h2 class="section-title">Claude Agent SDK — code-based</h2>
+    <div class="lesson">
+      <p>If you can code, the SDK gives you the same power as n8n with no UI overhead. Define tools as Python functions, plug them into a Claude agent, deploy as a script / Lambda / cron.</p>
+      <pre><code>from anthropic import Anthropic
+client = Anthropic()
+
+def get_weather(city: str) -> str:
+    return f"Sunny, 22°C in {city}"  # real impl would call an API
+
+response = client.messages.create(
+    model="claude-sonnet-4-6",
+    max_tokens=1024,
+    tools=[{
+        "name": "get_weather",
+        "description": "Get current weather for a city",
+        "input_schema": {
+            "type": "object",
+            "properties": {"city": {"type": "string"}},
+            "required": ["city"]
+        }
+    }],
+    messages=[{"role": "user", "content": "Should I bring an umbrella in London?"}]
+)</code></pre>
+      <p class="muted">The model decides when to call <code>get_weather</code>, you execute it, feed the result back, repeat. That's an agent.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-h">Lesson 5</div>
+    <h2 class="section-title">Three starter workflows</h2>
+
+    <div class="lesson">
+      <h3>1. Lead-gen agent</h3>
+      <p><strong>What it does:</strong> takes a list of company names, finds their site + LinkedIn + key person, scores fit against your ICP, drops qualified ones into a CRM with a personalised first-line.</p>
+      <p><strong>Build it in:</strong> n8n. Nodes: Google Sheet → Loop → AI Agent (with web search tool) → Conditional → CRM (HubSpot / Airtable) → Slack alert.</p>
+    </div>
+
+    <div class="lesson">
+      <h3>2. Content repurposing agent</h3>
+      <p><strong>What it does:</strong> watches a folder for new transcripts → extracts 5 quote-worthy lines → generates 3 LinkedIn posts, 3 tweets, 1 blog outline → drops into a "ready to post" doc.</p>
+      <p><strong>Build it in:</strong> n8n + Notion. Trigger on new file → Whisper for audio → AI Agent with brand-voice system prompt → Notion DB.</p>
+    </div>
+
+    <div class="lesson">
+      <h3>3. Inbox triage agent</h3>
+      <p><strong>What it does:</strong> reads incoming Gmail → classifies (urgent / can-wait / promo / newsletter / FYI) → drafts replies for the templated ones → leaves the urgent ones at top of inbox with a summary line.</p>
+      <p><strong>Build it in:</strong> n8n. Gmail trigger → AI classifier → Switch → templated Reply / Label / Archive.</p>
+    </div>
+  </div>
+
+  <div class="callout violet" style="margin-top:48px">
+    <strong>Next.</strong> Want copy-paste starter flows and skills? → <a href="recipes.html">Recipes</a>. Want to know what tools each agent can plug into? → <a href="tools.html">Tools Atlas</a>. Want to monetise this skill? → <a href="business.html">Make Money with AI</a>.
+  </div>
 </main>
 
 <footer id="app-foot" class="foot"></footer>

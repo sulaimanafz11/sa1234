@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Image &amp; Video Gen — NEXUS</title>
+<link rel="stylesheet" href="styles-hub.css">
+</head>
+<body>
+
+<header id="app-nav" class="app-nav"></header>
+
+<main class="page" id="page">
+  <div class="hero">
+    <span class="page-eyebrow">Visual AI · Image &amp; Video</span>
+    <h1>Generate the visuals,<br>like a director would.</h1>
+    <p>Midjourney, NanoBanana, Flux, Sora, Veo, Runway. Each one wants a different prompt style. Get this right and you stop "rolling the dice" and start directing the output.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-h">Lesson 1</div>
+    <h2 class="section-title">Anatomy of a visual prompt</h2>
+    <div class="lesson">
+      <p>A great image prompt has 6 ingredients in roughly this order:</p>
+      <ol>
+        <li><strong>Subject</strong> — what's in the frame. Be specific. <em>"A 60-year-old fisherman"</em> beats <em>"a man"</em>.</li>
+        <li><strong>Style</strong> — medium &amp; aesthetic. <em>"Cinematic photo, 35mm film grain, Roger Deakins lighting"</em>.</li>
+        <li><strong>Composition</strong> — framing &amp; angle. <em>"Low-angle close-up, rule of thirds, subject left"</em>.</li>
+        <li><strong>Lighting</strong> — direction, mood, temperature. <em>"Golden hour rim-light, warm tungsten fill"</em>.</li>
+        <li><strong>Mood</strong> — emotional descriptor. <em>"Contemplative, weathered, hopeful"</em>.</li>
+        <li><strong>Technical</strong> — lens, aspect ratio, camera. <em>"85mm, f/1.8, shallow depth of field, --ar 16:9"</em>.</li>
+      </ol>
+      <p class="muted">Negative prompts (what NOT to include) only matter for some models — see cheatsheets below.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-h">Cheatsheets</div>
+    <h2 class="section-title">Model-by-model quick reference</h2>
+
+    <div class="lesson">
+      <h3>🎨 Midjourney v7</h3>
+      <ul>
+        <li>Prompts can be terse — MJ fills in style aggressively. Less is more.</li>
+        <li>Use <code>--ar 16:9</code> / <code>--ar 9:16</code> / <code>--ar 1:1</code> for aspect ratio.</li>
+        <li><code>--style raw</code> for photorealism (less artistic by default).</li>
+        <li><code>--v 7</code> sets the version. <code>--s 250</code> stylization (0–1000).</li>
+        <li>Reference images: <code>--cref [URL]</code> for character, <code>--sref [URL]</code> for style.</li>
+        <li>Best at: posters, brand visuals, moodboards, anything painterly.</li>
+      </ul>
+    </div>
+
+    <div class="lesson">
+      <h3>🍌 NanoBanana (Gemini 2.5 Flash Image)</h3>
+      <ul>
+        <li>Conversational. You can iterate: <em>"now make it night-time"</em>, <em>"add a coffee cup"</em>.</li>
+        <li>Strong character consistency across edits — same person, multiple scenes.</li>
+        <li>Free via Gemini app. API access for builders.</li>
+        <li>Less artistic than MJ but unbeatable for product shots, edits, and Photoshop-style fixes.</li>
+        <li>Best at: product mockups, character sheets, "fix this image" workflows.</li>
+      </ul>
+    </div>
+
+    <div class="lesson">
+      <h3>⚡ Flux (Black Forest Labs)</h3>
+      <ul>
+        <li>Photoreal king. Best for human faces, hands, realistic skin.</li>
+        <li>Hosted free on Krea, fal.ai, Replicate. Or run locally.</li>
+        <li>Detailed prompts work well — Flux follows them more literally than MJ.</li>
+        <li>Fine-tuneable: train your own LoRA on a face, character, or style.</li>
+        <li>Best at: photoreal portraits, product photography, character training.</li>
+      </ul>
+    </div>
+
+    <div class="lesson">
+      <h3>🎬 Sora · Veo · Runway · Kling</h3>
+      <ul>
+        <li><strong>Sora</strong> (ChatGPT Pro) — best motion coherence at 10–20s. Realistic.</li>
+        <li><strong>Veo 3</strong> (Gemini Advanced) — best 1080p quality + audio sync.</li>
+        <li><strong>Runway Gen-4</strong> — creator-favourite. Motion brush, video-to-video, mature toolkit.</li>
+        <li><strong>Kling</strong> — physics often look right, cheaper credits.</li>
+        <li>For all: structure prompts as <em>"[Subject] [action]. [Camera movement]. [Setting + lighting]."</em></li>
+        <li>Always describe camera movement explicitly: <em>"slow push-in"</em>, <em>"orbit left"</em>, <em>"static handheld"</em>.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-h">Examples</div>
+    <h2 class="section-title">Prompts that work — copy &amp; adapt</h2>
+
+    <div class="lesson recipe">
+      <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+      <h3>Premium product shot (MJ / NanoBanana)</h3>
+<pre>A luxury oud fragrance bottle on dark obsidian stone, single overhead spotlight, dramatic side shadows, slight haze in air, macro detail on the gold cap, deep amber reflections, cinematic still-life, 85mm, f/2.8, hyper-detailed --ar 1:1 --v 7 --style raw</pre>
+    </div>
+
+    <div class="lesson recipe">
+      <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+      <h3>Editorial portrait (Flux / MJ)</h3>
+<pre>Portrait of a 60-year-old fisherman, weathered face, kind eyes, holding a worn rope, warm golden-hour light from camera-left, ocean blur in background, 35mm film aesthetic, Roger Deakins lighting, slight halation on highlights, photorealistic, shot on Kodak Portra 400 --ar 4:5</pre>
+    </div>
+
+    <div class="lesson recipe">
+      <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+      <h3>Brand hero image (MJ)</h3>
+<pre>Editorial flat lay, modern minimalist, single ceramic cup of saffron tea on linen, scattered dried roses, soft window light from upper-left, muted earth tones, slight film grain, magazine-quality composition --ar 16:9 --style raw</pre>
+    </div>
+
+    <div class="lesson recipe">
+      <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+      <h3>Character consistency (NanoBanana)</h3>
+<pre>Same character — a 30-year-old woman with curly red hair, freckles, wearing a green linen shirt — in a coffee shop, reading a book, soft afternoon light, candid photo style.
+
+(For follow-ups, just say: "now in a park", "now at sunset", etc.)</pre>
+    </div>
+
+    <div class="lesson recipe">
+      <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+      <h3>Cinematic video (Sora / Veo)</h3>
+<pre>A lone hooded figure walking across a snowy mountain ridge at dawn. Slow drone push-in from above, camera orbits gently to the right. Pink and orange morning light, fog drifting through valleys below. Cinematic, anamorphic lens flares, 24fps film look. 16:9.</pre>
+    </div>
+
+    <div class="lesson recipe">
+      <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+      <h3>Product video (Runway / Veo)</h3>
+<pre>Macro shot of a perfume bottle on textured stone. Camera slowly orbits around the bottle, light glints across the gold cap. Particles of dust float through a single warm spotlight. Subtle smoke wisps. 9:16 vertical for Reels. 8 seconds.</pre>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-h">Pro moves</div>
+    <h2 class="section-title">Things that 10× your output</h2>
+    <div class="lesson">
+      <ul>
+        <li><strong>Reference images.</strong> MJ <code>--cref</code> and <code>--sref</code> are gold for consistent characters / brand styles.</li>
+        <li><strong>Seeds.</strong> Same seed + tweaked prompt = controlled variations. Great for refining.</li>
+        <li><strong>Aspect ratio first.</strong> Decide where it'll be used (post / story / reel / banner) before prompting.</li>
+        <li><strong>Iterate, don't rewrite.</strong> If 80% is right, ask for a small tweak instead of starting over.</li>
+        <li><strong>Use a prompt builder.</strong> Ask <a href="chat.html">the AI tutor</a> or ChatGPT to <em>"turn this idea into a Midjourney prompt"</em>.</li>
+        <li><strong>Lighting is the secret.</strong> Same subject, different lighting = different image. Always specify it.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout violet" style="margin-top:48px">
+    <strong>Next.</strong> Stitch images into a brand → <a href="business.html">Make Money with AI</a> covers content/agency paths. Want video/audio recipes? → <a href="recipes.html">Recipes</a>.
+  </div>
+</main>
+
+<footer id="app-foot" class="foot"></footer>
+
+<script src="shared-hub.js"></script>
+<script>sharedInit('image');</script>
+</body>
+</html>

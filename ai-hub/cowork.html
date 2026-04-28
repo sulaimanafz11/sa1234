@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cowork — NEXUS</title>
+<link rel="stylesheet" href="styles-hub.css">
+</head>
+<body>
+
+<header id="app-nav" class="app-nav"></header>
+
+<main class="page" id="page">
+  <div class="hero">
+    <span class="page-eyebrow">Daily Workflow</span>
+    <h1>Work alongside AI<br>every single day.</h1>
+    <p>Not "use AI sometimes for ideas". A structured daily routine — inbox, calendar, meetings, research, writing, planning — with AI doing the bottom 60% so you can do the top 40% better.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-h">The stack</div>
+    <h2 class="section-title">A lean daily AI setup</h2>
+    <div class="lesson">
+      <ul>
+        <li><strong>One thinking partner</strong> — Claude (Project) or ChatGPT (Custom GPT). Has your context, voice, ongoing projects.</li>
+        <li><strong>One research assistant</strong> — Perplexity for facts, NotebookLM for your own docs.</li>
+        <li><strong>One meeting note-taker</strong> — Granola (Mac) or Fathom. Local-first preferred.</li>
+        <li><strong>One automation backbone</strong> — n8n cloud or self-host. For inbox / repetitive flows.</li>
+        <li><strong>One writing partner</strong> — same as your thinking partner, but with a "writing brand voice" system prompt.</li>
+        <li><strong>One image tool</strong> — NanoBanana for fast, MJ for hero images.</li>
+      </ul>
+      <p class="muted">Resist the urge to add a 7th tool until one of the above truly fails you. Tool sprawl kills the routine.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-h">Daily routine</div>
+    <h2 class="section-title">A real day with AI</h2>
+
+    <div class="lesson">
+      <h3>Morning · 15 minutes</h3>
+      <ul>
+        <li><strong>Inbox triage</strong> — n8n agent already classified overnight. You only see the "needs human" pile.</li>
+        <li><strong>Calendar review</strong> — ask Claude/ChatGPT: <em>"Look at today's meetings, suggest the one outcome I want from each."</em></li>
+        <li><strong>Day plan</strong> — 3 must-do tasks. AI helps reorder by impact.</li>
+      </ul>
+    </div>
+
+    <div class="lesson">
+      <h3>Meetings · throughout the day</h3>
+      <ul>
+        <li>Granola / Fathom captures &amp; structures notes automatically.</li>
+        <li>After: paste transcript into Claude → <em>"Pull decisions, action items (with owners), open questions."</em></li>
+        <li>Send the action items to attendees within 5 minutes of the call ending.</li>
+      </ul>
+    </div>
+
+    <div class="lesson">
+      <h3>Deep work blocks · 90 minutes</h3>
+      <ul>
+        <li>Claude / ChatGPT in one window. Your work in the other.</li>
+        <li>Ask for plans before drafts. Drafts before final. Cuts revision loops in half.</li>
+        <li>If stuck: <em>"Be my devil's advocate, list the 5 reasons this could fail."</em></li>
+      </ul>
+    </div>
+
+    <div class="lesson">
+      <h3>Research blocks · 30 minutes</h3>
+      <ul>
+        <li>Perplexity for any factual question — gives sources.</li>
+        <li>NotebookLM for "deep dive into the docs / PDFs I've already collected".</li>
+        <li>Save findings into a Notion DB tagged by topic — your second brain compounds.</li>
+      </ul>
+    </div>
+
+    <div class="lesson">
+      <h3>Wind-down · 10 minutes</h3>
+      <ul>
+        <li>Dump the day into Claude: <em>"Here's what I did. What's the most important thing for tomorrow?"</em></li>
+        <li>Quick log into Notion. The act of writing it = reinforces it.</li>
+        <li>Close email. Phone in another room.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-h">Templates</div>
+    <h2 class="section-title">Copy these into Claude / ChatGPT</h2>
+
+    <div class="lesson recipe">
+      <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+      <h3>Daily standup with yourself</h3>
+<pre>Be my accountability coach. Ask me three questions:
+1. What did I finish yesterday?
+2. What's the ONE thing today that matters most?
+3. What's blocking me?
+
+After my answers, give a short reality-check on whether today's plan actually moves my goals forward. Be honest, not encouraging.
+
+My goals: [PASTE]</pre>
+    </div>
+
+    <div class="lesson recipe">
+      <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+      <h3>Weekly review</h3>
+<pre>I'll paste my week below — meetings, tasks done, things missed.
+
+Produce:
+1. Wins (3 max — only real ones)
+2. Misses (3 max — what didn't happen)
+3. Patterns (anything repeating week-over-week?)
+4. Next week's ONE focus
+5. One thing to stop doing
+
+Be direct. No padding.
+
+This week:
+[PASTE]</pre>
+    </div>
+
+    <div class="lesson recipe">
+      <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+      <h3>Project kickoff brief</h3>
+<pre>Help me kick off a new project: [NAME].
+
+Give me:
+1. One-sentence outcome statement
+2. Top 3 risks
+3. Smallest possible v1 (what to ship in 7 days)
+4. The next 3 actions I should take TODAY (≤30 min each)
+
+Context:
+[BACKGROUND]</pre>
+    </div>
+
+    <div class="lesson recipe">
+      <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+      <h3>Email response in your voice</h3>
+<pre>Reply to this email in my voice. My voice is: warm, direct, slightly informal, UK English, never uses corporate-speak ("circle back", "touch base", "leverage").
+
+Aim: [WHAT THE REPLY SHOULD ACHIEVE]
+Keep it under [WORD COUNT] words.
+Sign off as: [NAME]
+
+Email:
+[PASTE]</pre>
+    </div>
+  </div>
+
+  <div class="callout violet" style="margin-top:48px">
+    <strong>Next.</strong> <a href="recipes.html">Recipes</a> for the system prompts behind these flows. <a href="business.html">Make Money with AI</a> for how to package this into a service.
+  </div>
+</main>
+
+<footer id="app-foot" class="foot"></footer>
+
+<script src="shared-hub.js"></script>
+<script>sharedInit('cowork');</script>
+</body>
+</html>

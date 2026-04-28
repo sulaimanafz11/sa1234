@@ -21,7 +21,269 @@
     <strong>Why this matters.</strong> The same model gives wildly different answers depending on how you ask. The gap between a beginner's output and a pro's output isn't the AI — it's the prompt. Get this right and every tool in NEXUS becomes 5× more useful.
   </div>
 
-  <p class="muted center" style="margin-top:48px">More sections coming — anatomy, system vs user, few-shot, templates.</p>
+  <div class="section">
+    <div class="section-h">Lesson 1</div>
+    <h2 class="section-title">Anatomy of a great prompt</h2>
+    <p class="section-sub">Five ingredients. Skip any of them and quality drops fast.</p>
+
+    <div class="lesson">
+      <h3>The five-part structure</h3>
+      <ol>
+        <li><strong>Role</strong> — who the AI should act as. <em>"You are a senior copywriter who has launched 50+ Shopify brands."</em></li>
+        <li><strong>Task</strong> — exactly what you want done. <em>"Write 3 product descriptions for a luxury oud fragrance."</em></li>
+        <li><strong>Context</strong> — what the AI needs to know. <em>"Brand is RIHLA. Audience: 25–45, modern Muslim professionals. Premium positioning, £85 price point."</em></li>
+        <li><strong>Format</strong> — how you want the output. <em>"Each description: 60–80 words. Headline + 3 sensory bullets + 1 CTA. Markdown."</em></li>
+        <li><strong>Constraints</strong> — what to avoid + tone. <em>"No clichés like 'transport you'. UK English. Confident, not salesy."</em></li>
+      </ol>
+      <h4>Same task, two prompts</h4>
+      <p class="muted">❌ <em>"Write product descriptions for my fragrance."</em></p>
+      <p class="muted">✅ <em>"You are a senior copywriter (50+ Shopify brand launches). Write 3 product descriptions for RIHLA, a luxury oud fragrance — £85, modern Muslim 25–45 audience, premium positioning. Each: 60–80 words, headline + 3 sensory bullets + 1 CTA. UK English, confident not salesy, no clichés."</em></p>
+      <p>The second prompt gets professional output on the first try. The first prompt needs 5 follow-ups.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-h">Lesson 2</div>
+    <h2 class="section-title">System prompt vs user prompt</h2>
+    <div class="lesson">
+      <h3>The two channels</h3>
+      <p>Most AI tools have <strong>two layers</strong> for instructions, even if the UI hides one:</p>
+      <ul>
+        <li><strong>System prompt</strong> — the persistent identity / rules. Set once, applies to every message in the chat. Use this for role, tone, constraints, output format.</li>
+        <li><strong>User prompt</strong> — the specific request right now. Use this for the task &amp; context that changes message-to-message.</li>
+      </ul>
+      <h4>Where you set it</h4>
+      <ul>
+        <li><strong>ChatGPT / Claude</strong> — Custom Instructions / Project instructions. Or start a "Project" with the system prompt baked in.</li>
+        <li><strong>Claude Code</strong> — <code>CLAUDE.md</code> at the project root. Read on every session.</li>
+        <li><strong>Cursor</strong> — <code>.cursorrules</code> file in the repo.</li>
+        <li><strong>API / SDK</strong> — explicit <code>system</code> parameter on the request.</li>
+      </ul>
+      <div class="callout violet">
+        <strong>Pro move.</strong> Save 3–5 system prompts as Custom GPTs / Claude Projects: <em>"Writing partner"</em>, <em>"Code reviewer"</em>, <em>"Research analyst"</em>, <em>"Email rewriter"</em>. You'll stop re-typing the role/tone every time.
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-h">Lesson 3</div>
+    <h2 class="section-title">Few-shot examples</h2>
+    <div class="lesson">
+      <h3>Show, don't tell</h3>
+      <p>If you can't <em>describe</em> the style you want clearly, show 2–3 examples instead. The model copies the pattern far better than it follows abstract instructions.</p>
+      <pre><code>Rewrite these support replies in our brand voice. Examples:
+
+INPUT: "Your order was delayed."
+OUTPUT: "Your order took the scenic route — apologies. It lands tomorrow."
+
+INPUT: "We can't refund this."
+OUTPUT: "We can't refund this one, but here's what we can do instead — keep reading."
+
+Now rewrite this:
+INPUT: "Your subscription has been cancelled."</code></pre>
+      <p>Three examples is the sweet spot. One isn't enough; ten is overkill and burns tokens.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-h">Lesson 4</div>
+    <h2 class="section-title">Output format &amp; schemas</h2>
+    <div class="lesson">
+      <h3>Tell it the shape you want</h3>
+      <p>Vague output = vague answer. Specifying the structure forces the model to think clearly.</p>
+      <h4>Common formats worth memorising</h4>
+      <ul>
+        <li><strong>Markdown</strong> — for any human-reading output (default)</li>
+        <li><strong>JSON</strong> — for anything you'll feed into code</li>
+        <li><strong>Table</strong> — for comparisons, decisions, options</li>
+        <li><strong>Numbered steps</strong> — for instructions or playbooks</li>
+        <li><strong>YAML / front-matter</strong> — for structured config / metadata</li>
+      </ul>
+      <pre><code>Return your answer as JSON with this exact shape:
+{
+  "summary": "one sentence",
+  "key_points": ["point 1", "point 2", "point 3"],
+  "risk_score": 1-10,
+  "recommendation": "string"
+}
+No markdown. No commentary outside the JSON.</code></pre>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-h">Lesson 5</div>
+    <h2 class="section-title">Chain-of-thought &amp; planning</h2>
+    <div class="lesson">
+      <h3>Make the model think before it answers</h3>
+      <p>Modern reasoning models do this automatically. For older / faster models, ask explicitly:</p>
+      <ul>
+        <li><em>"Think step-by-step before giving the final answer."</em></li>
+        <li><em>"First plan your approach. Then execute."</em></li>
+        <li><em>"List the trade-offs of each option, then recommend one."</em></li>
+      </ul>
+      <p>For complex tasks (code, analysis, decisions), this single line can change a wrong answer into a right one.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-h">Lesson 6</div>
+    <h2 class="section-title">Common mistakes</h2>
+    <div class="lesson">
+      <ol>
+        <li><strong>Asking for too much in one prompt.</strong> "Write me a business plan, do market research, generate a logo, and draft 10 ads." Break it into separate prompts in the same chat.</li>
+        <li><strong>No role.</strong> Without one, you get generic averaged-internet output.</li>
+        <li><strong>No examples for tone.</strong> "Write in a casual voice" is meaningless. Show one example of casual voice.</li>
+        <li><strong>Vague "make it better".</strong> Better at what? Shorter? Funnier? More technical? Be specific.</li>
+        <li><strong>Not iterating.</strong> First answer is rarely the best. Reply with: <em>"Tighten this, cut by 30%, keep the metaphor."</em></li>
+        <li><strong>Treating it like Google.</strong> Single keywords get keyword answers. Sentences get thoughtful answers.</li>
+        <li><strong>Forgetting to verify.</strong> Models hallucinate confidently. For facts, cross-check or use Perplexity.</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-h">Templates</div>
+    <h2 class="section-title">Steal these — they work</h2>
+    <p class="section-sub">Drop-in starting points for the most common tasks. Edit the bracketed bits.</p>
+
+    <div class="lesson recipe">
+      <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+      <h3>1. The Universal Writing Prompt</h3>
+<pre>You are a [ROLE — e.g. senior copywriter]. Write a [DELIVERABLE — e.g. 500-word blog post] for [AUDIENCE]. The goal is [OUTCOME].
+
+Tone: [TONE — e.g. confident, warm, slightly informal].
+Avoid: [LIST — clichés, jargon, hype words].
+Format: [FORMAT — e.g. H2 + 3 H3s + bullet list summary].
+Length: [WORDS].
+
+Context:
+[PASTE ANY RELEVANT BACKGROUND]
+
+Write 2 versions. After each, give 1 sentence on what's different.</pre>
+    </div>
+
+    <div class="lesson recipe">
+      <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+      <h3>2. The Code Review Prompt</h3>
+<pre>You are a senior [LANGUAGE] engineer. Review the code below.
+
+For each issue you find, return:
+- file:line
+- severity (low / medium / high)
+- problem (1 sentence)
+- fix (1 sentence)
+
+Only flag real issues — no nitpicks about style. Prioritise correctness, security, and obvious performance.
+
+Code:
+[PASTE]</pre>
+    </div>
+
+    <div class="lesson recipe">
+      <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+      <h3>3. The Decision Helper</h3>
+<pre>I'm trying to decide between [OPTION A] and [OPTION B] for [GOAL].
+
+Constraints: [BUDGET / TIME / SKILL / OTHER]
+What I value most: [TOP 2-3]
+What I'd accept losing: [WHAT'S NEGOTIABLE]
+
+Build a comparison table covering: cost, time-to-value, learning curve, scalability, lock-in. Then give me your recommendation and the strongest counter-argument to it.</pre>
+    </div>
+
+    <div class="lesson recipe">
+      <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+      <h3>4. The Research Brief</h3>
+<pre>Research [TOPIC] and produce a brief I can read in 5 minutes.
+
+Output sections (in order):
+1. TL;DR — 3 bullets
+2. Why this matters now
+3. Top 5 things to know
+4. Common misconceptions
+5. What to read / watch / try next (3 each)
+
+Cite sources where possible. Flag anything you're uncertain about.</pre>
+    </div>
+
+    <div class="lesson recipe">
+      <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+      <h3>5. The Email Rewriter</h3>
+<pre>Rewrite this email to be: clearer, shorter, and more confident.
+
+Keep: the actual ask, the deadline, any name/dates.
+Remove: hedging words ("just", "maybe", "I think"), unnecessary apologies, filler.
+Tone: warm but direct. UK English.
+
+Original:
+[PASTE]</pre>
+    </div>
+
+    <div class="lesson recipe">
+      <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+      <h3>6. The Plan-Then-Do Wrapper</h3>
+<pre>Before you do the task, plan your approach in 3-5 bullets. After the plan, ask me a maximum of 3 clarifying questions if anything is genuinely ambiguous (skip if it's clear). Then wait for my reply before executing.
+
+Task: [PASTE]</pre>
+    </div>
+
+    <div class="lesson recipe">
+      <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+      <h3>7. The Image Prompt Builder</h3>
+<pre>Help me write a prompt for [Midjourney / NanoBanana / Flux] for the following image:
+
+What I want: [DESCRIBE]
+Style references: [ARTIST / FILM / GENRE]
+Mood: [WORD]
+Aspect ratio: [16:9 / 1:1 / 9:16]
+
+Output a single ready-to-paste prompt with: subject, style, lighting, lens/camera, composition, mood, negative prompt. Then explain in 2 lines why each choice matters.</pre>
+    </div>
+
+    <div class="lesson recipe">
+      <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+      <h3>8. The Devil's Advocate</h3>
+<pre>I'm planning to [DECISION / IDEA].
+
+Be my devil's advocate. List the 5 strongest reasons this could fail or be a bad idea, ranked by likelihood × impact. For each, suggest the cheapest test I could run before committing.
+
+Be honest, not encouraging.</pre>
+    </div>
+
+    <div class="lesson recipe">
+      <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+      <h3>9. The Meeting Summariser</h3>
+<pre>Below is a meeting transcript. Produce:
+
+1. **Decisions made** (bullet list, names of who decided)
+2. **Action items** (table: Owner | Action | Deadline)
+3. **Open questions** (bullets)
+4. **Risks / red flags** (bullets — only if genuine)
+
+If something was discussed but not decided, put it under Open questions, not Decisions.
+
+Transcript:
+[PASTE]</pre>
+    </div>
+
+    <div class="lesson recipe">
+      <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+      <h3>10. The Learning Plan</h3>
+<pre>I want to learn [TOPIC]. I have [HOURS/WEEK] and [WEEKS] to get to [LEVEL — beginner usable / interview-ready / expert].
+
+Build me a week-by-week plan with:
+- Weekly goal (1 sentence)
+- 1 free resource (article / video / docs)
+- 1 hands-on project to ship that week
+- 1 question I should be able to answer by Sunday
+
+Be realistic about pace. Front-load the highest-leverage concepts.</pre>
+    </div>
+  </div>
+
+  <div class="callout violet" style="margin-top:48px">
+    <strong>Where to next?</strong> Open <a href="recipes.html">Recipes</a> for full system-prompt templates and Claude skills, or <a href="coding.html">AI for Coding</a> if you want to point this skill at building real software.
+  </div>
 </main>
 
 <footer id="app-foot" class="foot"></footer>
