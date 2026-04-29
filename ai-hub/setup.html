@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Setup Guide — NEXUS</title>
+<link rel="stylesheet" href="styles-hub.css">
+</head>
+<body>
+<header id="app-nav" class="app-nav"></header>
+<main class="page" id="page">
+
+  <div class="hero">
+    <span class="page-eyebrow">Setup Guide</span>
+    <h1>Get everything installed<br>and configured properly.</h1>
+    <p>Claude Code on Windows and Mac, IDE plugins, Claude.ai Projects, Custom GPTs, project-level CLAUDE.md configs, and the settings that actually matter. Do this once, properly, and you'll never re-configure again.</p>
+  </div>
+
+  <!-- ── SECTION 1: Claude Code on PC ─────────────────────────────────── -->
+  <div class="section">
+    <div class="section-h">Part 1</div>
+    <h2 class="section-title">Install Claude Code on Windows &amp; Mac</h2>
+    <p class="section-sub">Claude Code is Anthropic's official CLI tool. It runs in your terminal and can connect to VS Code, JetBrains, or the Claude web app.</p>
+
+    <div class="lesson">
+      <h3>Prerequisites</h3>
+      <ul>
+        <li><strong>Node.js 18+</strong> — download at <a href="https://nodejs.org" target="_blank">nodejs.org</a> (pick LTS). This installs both Node and npm.</li>
+        <li><strong>A terminal</strong> — Windows: use PowerShell or Windows Terminal. Mac: use Terminal or iTerm2.</li>
+        <li><strong>A Claude account</strong> — Pro or Max plan required for Claude Code. Sign up at <a href="https://claude.ai" target="_blank">claude.ai</a>.</li>
+      </ul>
+
+      <h4>Install (both platforms, same command)</h4>
+      <div class="recipe">
+        <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+<pre>npm install -g @anthropic-ai/claude-code</pre>
+      </div>
+
+      <h4>First run</h4>
+      <div class="recipe">
+        <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+<pre># Navigate to any project folder first
+cd my-project
+
+# Then run
+claude</pre>
+      </div>
+      <p class="muted">On first run it opens your browser and asks you to log in with your Anthropic account. After that it stays authenticated. You're done.</p>
+
+      <h4>Windows-specific notes</h4>
+      <ul>
+        <li>If you get a permissions error on install, run PowerShell as Administrator and try again.</li>
+        <li>If <code>claude</code> isn't found after install, close and reopen your terminal — it updates PATH on shell restart.</li>
+        <li>Windows Defender may flag the binary on first run — allow it. It's safe.</li>
+        <li>WSL2 (Linux inside Windows) works perfectly and is often a smoother experience for developers.</li>
+      </ul>
+
+      <h4>Mac-specific notes</h4>
+      <ul>
+        <li>If you get an error about <code>EACCES permissions</code>, never use <code>sudo npm install -g</code>. Instead, fix npm permissions: <a href="https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally" target="_blank">npm docs on this</a>.</li>
+        <li>Homebrew users: install Node via <code>brew install node</code> instead of downloading the installer — avoids permission issues.</li>
+      </ul>
+    </div>
+
+    <div class="lesson">
+      <h3>Connect to your IDE</h3>
+      <h4>VS Code</h4>
+      <ol>
+        <li>Open VS Code → Extensions (Ctrl+Shift+X / Cmd+Shift+X)</li>
+        <li>Search for <strong>"Claude Code"</strong> by Anthropic → Install</li>
+        <li>The extension adds a Claude panel on the left sidebar</li>
+        <li>First use: it'll ask you to log in via the CLI (same account)</li>
+      </ol>
+      <h4>JetBrains (IntelliJ, PyCharm, WebStorm, etc.)</h4>
+      <ol>
+        <li>Settings → Plugins → search "Claude Code" → Install</li>
+        <li>Restart the IDE</li>
+        <li>A Claude tool window appears at the bottom</li>
+      </ol>
+      <h4>Claude Code Web (no install needed)</h4>
+      <p class="muted">Visit <a href="https://claude.ai/code" target="_blank">claude.ai/code</a> — runs Claude Code in your browser with a sandboxed environment. Good for: trying it out, working on other people's machines, or when you don't have CLI access. This is the version running right now in this NEXUS session.</p>
+    </div>
+
+    <div class="lesson">
+      <h3>Key commands to know</h3>
+      <div class="table-wrap">
+        <table class="tbl">
+          <tr><th>Command</th><th>What it does</th></tr>
+          <tr><td><code>claude</code></td><td>Start an interactive session in the current folder</td></tr>
+          <tr><td><code>claude "fix the login bug"</code></td><td>One-shot task — does it and exits</td></tr>
+          <tr><td><code>claude --help</code></td><td>Full command reference</td></tr>
+          <tr><td><code>/clear</code> (inside session)</td><td>Clear the conversation context</td></tr>
+          <tr><td><code>/config</code></td><td>Open settings in the UI</td></tr>
+          <tr><td><code>/skills</code></td><td>List installed skills</td></tr>
+          <tr><td><code>/mcp</code></td><td>List connected MCP servers</td></tr>
+          <tr><td><code>Escape</code></td><td>Interrupt a running task</td></tr>
+          <tr><td><code>Ctrl+C</code></td><td>Exit the session</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 2: settings.json ──────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-h">Part 2</div>
+    <h2 class="section-title">settings.json — the config that runs everything</h2>
+    <div class="lesson">
+      <p>Claude Code has <strong>two levels</strong> of settings:</p>
+      <ul>
+        <li><strong>User-level</strong> — applies to every project. Lives at <code>~/.claude/settings.json</code> (Mac/Linux) or <code>%APPDATA%\Claude\settings.json</code> (Windows).</li>
+        <li><strong>Project-level</strong> — applies only to this folder. Lives at <code>.claude/settings.json</code> inside the repo.</li>
+      </ul>
+      <p class="muted">Project settings override user settings for that project.</p>
+
+      <h4>Starter user-level settings.json</h4>
+      <div class="recipe">
+        <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+<pre>{
+  "theme": "dark",
+  "model": "claude-sonnet-4-6",
+  "autoApprove": ["Bash(git status)", "Bash(git log)", "Bash(git diff)", "Read"],
+  "env": {
+    "ANTHROPIC_MODEL": "claude-sonnet-4-6"
+  }
+}</pre>
+      </div>
+
+      <h4>What autoApprove does</h4>
+      <p class="muted">Any tool listed in <code>autoApprove</code> runs without asking permission. Put safe read-only things here to reduce interruptions. Never put <code>Bash(rm</code> or <code>Bash(git push</code> in there.</p>
+
+      <h4>Hooks (run code on events)</h4>
+      <p class="muted">Hooks fire shell commands on events like session start, file edit, or tool use. Example: auto-run linter after every file edit:</p>
+      <div class="recipe">
+        <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+<pre>{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [{ "type": "command", "command": "npm run lint --silent" }]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [{ "type": "command", "command": "echo 'Claude stopped'" }]
+      }
+    ]
+  }
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 3: CLAUDE.md ──────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-h">Part 3</div>
+    <h2 class="section-title">CLAUDE.md — your project's permanent memory</h2>
+    <div class="lesson">
+      <p>Place a <code>CLAUDE.md</code> file at the root of any project and Claude Code reads it automatically on every session. It's your project's standing instructions — stack, conventions, test commands, what not to do, domain glossary.</p>
+      <p class="muted">Think of it as the briefing you'd give a new senior developer on day one, so you never have to repeat yourself.</p>
+
+      <h4>Where it lives</h4>
+      <ul>
+        <li><code>./CLAUDE.md</code> — project root (most common)</li>
+        <li><code>~/.claude/CLAUDE.md</code> — user-level, applies everywhere</li>
+        <li><code>./src/CLAUDE.md</code> — sub-folder level (applies when Claude is working in that folder)</li>
+      </ul>
+
+      <h4>Minimal starter template (any project)</h4>
+      <div class="recipe">
+        <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+<pre># [PROJECT NAME]
+
+## Stack
+- Language + version:
+- Framework + version:
+- DB:
+- Package manager: (npm / pnpm / yarn / pip / cargo)
+- Run dev: `[command]`
+- Run tests: `[command]`
+- Run lint: `[command]`
+
+## Conventions
+- [naming conventions, file layout, style rules]
+- [any non-obvious patterns you use]
+
+## Never do
+- [things to avoid, files not to touch, commands not to run]
+
+## Domain glossary
+- [term]: [what it means in THIS project]</pre>
+      </div>
+
+      <h4>User-level CLAUDE.md (applies to all projects)</h4>
+      <div class="recipe">
+        <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+<pre># Global preferences
+
+## My style
+- I prefer TypeScript over JavaScript
+- Always use pnpm, never npm or yarn
+- Tailwind CSS only — no CSS-in-JS, no SCSS
+- Named exports only — no default exports
+- Write tests for any new functions I ask for
+- UK English in comments and user-facing text
+
+## Commit messages
+- Conventional Commits format: feat/fix/chore/docs/refactor/test
+- Imperative mood: "add feature" not "added feature"
+- Max 72 chars in subject line
+
+## Things I hate
+- Adding comments that just describe what the code does
+- Markdown in responses when I'm asking a quick question
+- Suggesting I "consider" something — just do it or say why not</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 4: Claude.ai Projects ────────────────────────────────── -->
+  <div class="section">
+    <div class="section-h">Part 4</div>
+    <h2 class="section-title">Claude.ai Projects — your persistent AI workspace</h2>
+    <div class="lesson">
+      <p>Projects (on <a href="https://claude.ai" target="_blank">claude.ai</a>) are persistent, context-aware workspaces. Each one has:</p>
+      <ul>
+        <li>A <strong>system prompt</strong> ("Project instructions") that applies to every conversation in the project</li>
+        <li><strong>File uploads</strong> that stay in context permanently — docs, PDFs, code files, brand guidelines</li>
+        <li>A <strong>conversation history</strong> that persists between sessions (unlike regular chats)</li>
+      </ul>
+
+      <h4>How to create one</h4>
+      <ol>
+        <li>Go to <a href="https://claude.ai" target="_blank">claude.ai</a> → left sidebar → <strong>"New Project"</strong></li>
+        <li>Give it a name (e.g. "NEXUS Work", "Client — Acme Corp", "Writing Partner")</li>
+        <li>Click <strong>"Project instructions"</strong> and paste your system prompt</li>
+        <li>Upload any reference files (brand guide, code samples, previous work)</li>
+        <li>Start chatting — Claude has all of that context every time</li>
+      </ol>
+
+      <h4>5 Projects worth creating right now</h4>
+      <div class="grid grid-2" style="margin-top:14px">
+        <div class="card">
+          <div class="card-h">✎ Writing Partner</div>
+          <p class="muted" style="font-size:13px">Upload 5 examples of your past writing. System prompt: "You are my writing partner. Match my voice exactly. When I share a draft, rewrite it to be 30% shorter and 2× more confident."</p>
+        </div>
+        <div class="card">
+          <div class="card-h">⌬ Code Reviewer</div>
+          <p class="muted" style="font-size:13px">Upload your CLAUDE.md. System prompt: "You review my code. Flag real issues only: correctness, security, performance. Skip style preferences."</p>
+        </div>
+        <div class="card">
+          <div class="card-h">🔍 Research Analyst</div>
+          <p class="muted" style="font-size:13px">System prompt: "You produce 5-minute research briefs. Always: TL;DR, why it matters now, top 5 things to know, misconceptions, what to read next. Cite sources. Flag uncertainty."</p>
+        </div>
+        <div class="card">
+          <div class="card-h">💼 Client Work (one per client)</div>
+          <p class="muted" style="font-size:13px">Upload: their brand guidelines, previous deliverables, contracts. System prompt: "You are helping me work on [CLIENT]. Know their brand, tone, goals, and history."</p>
+        </div>
+      </div>
+
+      <h4>System prompt template to copy into any Project</h4>
+      <div class="recipe">
+        <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+<pre>## Role
+You are [ROLE — what this project is for].
+
+## Context
+[What I'm working on. Background I never want to re-explain.]
+
+## My style preferences
+[Tone, format preferences, UK/US English, etc.]
+
+## Output format
+[How you should structure your responses by default.]
+
+## What to do by default
+[Standing instructions — e.g. "Always ask one clarifying question before a long task."]
+
+## What NOT to do
+[Things that annoy me or waste time — e.g. "Never add a disclaimer paragraph at the end."]</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 5: Custom GPTs ────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-h">Part 5</div>
+    <h2 class="section-title">Custom GPTs (ChatGPT) — same idea, different platform</h2>
+    <div class="lesson">
+      <p>If you use ChatGPT Plus, Custom GPTs are your equivalent of Claude Projects. You build a GPT once and it has a persistent system prompt, optional file knowledge, and optionally browsing / code interpreter / image gen baked in.</p>
+
+      <h4>How to create one</h4>
+      <ol>
+        <li>Go to <a href="https://chat.openai.com" target="_blank">chat.openai.com</a> → top-left menu → <strong>"Explore GPTs"</strong> → <strong>"Create"</strong></li>
+        <li>Use the builder or click <strong>"Configure"</strong> to write the system prompt directly</li>
+        <li>Upload files in <strong>"Knowledge"</strong> — it uses RAG to answer questions from them</li>
+        <li>Toggle: Web browsing, DALL-E, Code Interpreter</li>
+        <li>Save → it appears in your sidebar for instant access</li>
+      </ol>
+
+      <h4>GPTs vs Claude Projects — which one?</h4>
+      <div class="table-wrap">
+        <table class="tbl">
+          <tr><th>Feature</th><th>Claude Projects</th><th>Custom GPT</th></tr>
+          <tr><td>Persistent instructions</td><td>✅</td><td>✅</td></tr>
+          <tr><td>File uploads</td><td>✅ (full context)</td><td>✅ (RAG-based)</td></tr>
+          <tr><td>Memory across chats</td><td>✅</td><td>⚠ Limited</td></tr>
+          <tr><td>Image generation</td><td>❌ (Claude only)</td><td>✅ DALL-E built in</td></tr>
+          <tr><td>Code interpreter</td><td>❌</td><td>✅</td></tr>
+          <tr><td>Share with others</td><td>❌ (private)</td><td>✅ public GPT store</td></tr>
+          <tr><td>Answer quality (writing/reasoning)</td><td>Claude usually wins</td><td>GPT-5 competitive</td></tr>
+        </table>
+      </div>
+      <p class="muted">Verdict: Use Claude Projects for serious writing/research/code work. Custom GPTs when you need image gen, code interpreter, or to share a GPT publicly.</p>
+    </div>
+  </div>
+
+  <!-- ── SECTION 6: MCP Servers ────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-h">Part 6</div>
+    <h2 class="section-title">MCP servers — give Claude Code new tools</h2>
+    <div class="lesson">
+      <p>MCP (Model Context Protocol) is how you plug extra tools into Claude Code. Think of it like browser extensions, but for your AI agent — each MCP server adds new capabilities.</p>
+
+      <h4>Popular MCP servers to install</h4>
+      <div class="table-wrap">
+        <table class="tbl">
+          <tr><th>Server</th><th>What it gives Claude</th><th>Install</th></tr>
+          <tr><td>filesystem</td><td>Read/write files anywhere on your system</td><td><code>@modelcontextprotocol/server-filesystem</code></td></tr>
+          <tr><td>github</td><td>Read repos, issues, PRs via natural language</td><td><code>@modelcontextprotocol/server-github</code></td></tr>
+          <tr><td>postgres</td><td>Query your Postgres DB in plain English</td><td><code>@modelcontextprotocol/server-postgres</code></td></tr>
+          <tr><td>puppeteer</td><td>Browse websites, take screenshots</td><td><code>@modelcontextprotocol/server-puppeteer</code></td></tr>
+          <tr><td>brave-search</td><td>Search the web (real-time)</td><td><code>@modelcontextprotocol/server-brave-search</code></td></tr>
+          <tr><td>slack</td><td>Read/send Slack messages</td><td><code>@modelcontextprotocol/server-slack</code></td></tr>
+          <tr><td>notion</td><td>Read/write Notion pages and DBs</td><td><code>@suekou/mcp-notion-server</code></td></tr>
+        </table>
+      </div>
+
+      <h4>How to install an MCP server</h4>
+      <div class="recipe">
+        <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+<pre># Inside a Claude Code session
+/mcp add github
+
+# Or edit ~/.claude/settings.json manually:
+{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "your_token_here"
+      }
+    }
+  }
+}</pre>
+      </div>
+      <p class="muted">Full list of official servers: <a href="https://github.com/modelcontextprotocol/servers" target="_blank">github.com/modelcontextprotocol/servers</a></p>
+    </div>
+  </div>
+
+  <div class="callout violet" style="margin-top:48px">
+    <strong>Next.</strong> Now that you're set up, go to <a href="skills.html">Skills</a> to extend Claude Code with downloadable behaviours, or <a href="github.html">GitHub</a> if you need to get comfortable with version control first.
+  </div>
+
+</main>
+<footer id="app-foot" class="foot"></footer>
+<script src="shared-hub.js"></script>
+<script>sharedInit('setup');</script>
+</body>
+</html>

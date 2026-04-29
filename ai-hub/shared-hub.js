@@ -18,6 +18,10 @@ const NAV_PAGES = [
   { id: 'cowork',    label: 'Cowork',     icon: '⊕', href: 'cowork.html' },
   { id: 'recipes',   label: 'Recipes',    icon: '★', href: 'recipes.html' },
   { id: 'chat',      label: 'AI Tutor',   icon: '◇', href: 'chat.html' },
+  { id: 'setup',     label: 'Setup',      icon: '⚙', href: 'setup.html' },
+  { id: 'skills',    label: 'Skills',     icon: '⬡', href: 'skills.html' },
+  { id: 'github',    label: 'GitHub',     icon: '◎', href: 'github.html' },
+  { id: 'creators',  label: 'Creators',   icon: '▶', href: 'creators.html' },
 ];
 
 function renderNav(activePage) {
