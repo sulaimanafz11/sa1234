@@ -281,9 +281,119 @@ Be realistic about pace. Front-load the highest-leverage concepts.</pre>
     </div>
   </div>
 
+  <!-- ── INTERACTIVE: Prompt Builder ──────────────────────────────────── -->
+  <div class="section">
+    <div class="section-h">Interactive</div>
+    <h2 class="section-title">⚡ Prompt Builder — fill in, copy out</h2>
+    <p class="section-sub">Plug in the bits, get a complete production-grade prompt ready to paste into Claude / ChatGPT / Gemini.</p>
+
+    <div class="lesson">
+      <div class="grid grid-2">
+        <div>
+          <div class="field-grp">
+            <label>1. Role <span class="muted" style="text-transform:none;letter-spacing:0">(who Claude should act as)</span></label>
+            <input id="pb-role" placeholder="e.g. senior copywriter who has launched 50+ Shopify brands">
+          </div>
+          <div class="field-grp">
+            <label>2. Task <span class="muted" style="text-transform:none;letter-spacing:0">(exactly what to do)</span></label>
+            <input id="pb-task" placeholder="e.g. write 3 product descriptions">
+          </div>
+          <div class="field-grp">
+            <label>3. Context <span class="muted" style="text-transform:none;letter-spacing:0">(what they need to know)</span></label>
+            <textarea id="pb-context" rows="3" placeholder="Brand: RIHLA. Audience: 25-45 modern Muslim professionals. £85 price point. Premium positioning." style="width:100%;background:var(--bg-2);border:1px solid var(--line);border-radius:10px;padding:10px 14px;color:var(--t1);font-family:inherit;font-size:14px;resize:vertical"></textarea>
+          </div>
+        </div>
+        <div>
+          <div class="field-grp">
+            <label>4. Format <span class="muted" style="text-transform:none;letter-spacing:0">(how to structure output)</span></label>
+            <input id="pb-format" placeholder="60-80 words each. Headline + 3 sensory bullets + 1 CTA. Markdown.">
+          </div>
+          <div class="field-grp">
+            <label>5. Tone &amp; constraints</label>
+            <input id="pb-tone" placeholder="UK English. Confident, not salesy. No clichés like 'transport you'.">
+          </div>
+          <div class="field-grp">
+            <label>6. Examples <span class="muted" style="text-transform:none;letter-spacing:0">(optional but powerful)</span></label>
+            <textarea id="pb-examples" rows="3" placeholder="Paste 1-3 examples of past work that nailed the style." style="width:100%;background:var(--bg-2);border:1px solid var(--line);border-radius:10px;padding:10px 14px;color:var(--t1);font-family:inherit;font-size:14px;resize:vertical"></textarea>
+          </div>
+          <div class="field-grp">
+            <label>Extras</label>
+            <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:6px">
+              <label style="font-size:13px;color:var(--t2);text-transform:none;letter-spacing:0;display:flex;align-items:center;gap:6px"><input type="checkbox" id="pb-plan" checked> Plan before doing</label>
+              <label style="font-size:13px;color:var(--t2);text-transform:none;letter-spacing:0;display:flex;align-items:center;gap:6px"><input type="checkbox" id="pb-ask"> Ask up to 3 clarifying Qs first</label>
+              <label style="font-size:13px;color:var(--t2);text-transform:none;letter-spacing:0;display:flex;align-items:center;gap:6px"><input type="checkbox" id="pb-versions"> Give 2 versions</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="buildPrompt()">Assemble prompt →</button>
+        <button class="btn btn-ghost" onclick="loadExample()">Load example</button>
+        <button class="btn btn-ghost" onclick="resetPB()">Reset</button>
+      </div>
+    </div>
+
+    <div id="pb-output-wrap" style="display:none">
+      <div class="lesson recipe" style="margin-top:18px">
+        <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+        <h3>Your prompt</h3>
+        <pre id="pb-output"></pre>
+        <div class="callout violet" style="margin-top:14px"><strong>Now do this:</strong> paste into Claude / ChatGPT / Gemini. If the first answer's not right, iterate by editing one field above and re-assembling. Each cycle takes 30 seconds and the prompt gets sharper.</div>
+      </div>
+    </div>
+  </div>
+
   <div class="callout violet" style="margin-top:48px">
     <strong>Where to next?</strong> Open <a href="recipes.html">Recipes</a> for full system-prompt templates and Claude skills, or <a href="coding.html">AI for Coding</a> if you want to point this skill at building real software.
   </div>
+
+  <script>
+    function v(id) { return document.getElementById(id).value.trim(); }
+    function buildPrompt() {
+      const role = v('pb-role'), task = v('pb-task'), ctx = v('pb-context');
+      const fmt = v('pb-format'), tone = v('pb-tone'), ex = v('pb-examples');
+      const plan = document.getElementById('pb-plan').checked;
+      const ask = document.getElementById('pb-ask').checked;
+      const versions = document.getElementById('pb-versions').checked;
+
+      let out = '';
+      if (role) out += `You are ${role}.\n\n`;
+      if (task) out += `**Task:** ${task}\n\n`;
+      if (ctx)  out += `**Context:**\n${ctx}\n\n`;
+      if (fmt)  out += `**Format:** ${fmt}\n\n`;
+      if (tone) out += `**Tone &amp; constraints:** ${tone}\n\n`;
+      if (ex)   out += `**Examples to match style:**\n${ex}\n\n`;
+
+      const extras = [];
+      if (plan) extras.push('Plan your approach in 3-5 bullets before executing.');
+      if (ask) extras.push('Ask a maximum of 3 clarifying questions if anything is genuinely ambiguous, then wait for my reply.');
+      if (versions) extras.push('Produce 2 versions and explain in 1 sentence what is different.');
+      if (extras.length) out += `**Process:**\n- ${extras.join('\n- ')}\n`;
+
+      if (!out) { alert('Fill in at least Role + Task to assemble.'); return; }
+      document.getElementById('pb-output').textContent = out.trim();
+      document.getElementById('pb-output-wrap').style.display = 'block';
+      document.getElementById('pb-output-wrap').scrollIntoView({behavior:'smooth', block:'start'});
+    }
+    function loadExample() {
+      document.getElementById('pb-role').value = 'senior copywriter who has launched 50+ Shopify brands';
+      document.getElementById('pb-task').value = 'write 3 product descriptions for a luxury oud fragrance';
+      document.getElementById('pb-context').value = 'Brand: RIHLA. Audience: 25-45 modern Muslim professionals. £85 price point. Premium positioning. Notes are oud, saffron, amber, rose.';
+      document.getElementById('pb-format').value = 'Each: 60-80 words. Headline + 3 sensory bullets + 1 CTA. Markdown.';
+      document.getElementById('pb-tone').value = 'UK English. Confident, not salesy. No clichés like "transport you".';
+      document.getElementById('pb-examples').value = '';
+      document.getElementById('pb-plan').checked = true;
+      document.getElementById('pb-versions').checked = true;
+    }
+    function resetPB() {
+      ['pb-role','pb-task','pb-context','pb-format','pb-tone','pb-examples'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('pb-plan').checked = true;
+      document.getElementById('pb-ask').checked = false;
+      document.getElementById('pb-versions').checked = false;
+      document.getElementById('pb-output-wrap').style.display = 'none';
+    }
+  </script>
 </main>
 
 <footer id="app-foot" class="foot"></footer>
