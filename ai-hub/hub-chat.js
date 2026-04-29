@@ -134,7 +134,10 @@ async function sendMessage() {
   appendTyping();
   chatHistory.push({ role: 'user', parts: [{ text }] });
 
-  if (!CONFIG.GEMINI_KEY) {
+  const useClaude = CONFIG.TUTOR_PROVIDER === 'anthropic' && CONFIG.ANTHROPIC_KEY;
+  const useGemini = CONFIG.GEMINI_KEY && !useClaude;
+
+  if (!useClaude && !useGemini) {
     await new Promise(r => setTimeout(r, 600));
     removeTyping();
     const answer = builtinAnswer(text);
@@ -144,19 +147,45 @@ async function sendMessage() {
   }
 
   try {
-    const messages = [
-      { role: 'user', parts: [{ text: SYSTEM_PROMPT }] },
-      { role: 'model', parts: [{ text: "Got it — I'm NEXUS Tutor. Ask me anything." }] },
-      ...chatHistory,
-    ];
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${CONFIG.GEMINI_KEY}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ contents: messages }),
-    });
-    if (!res.ok) throw new Error(`API error ${res.status}`);
-    const data = await res.json();
-    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text ?? "Sorry, I couldn't generate a response.";
+    let reply;
+    if (useClaude) {
+      const messages = chatHistory.map(m => ({
+        role: m.role === 'model' ? 'assistant' : 'user',
+        content: m.parts[0].text,
+      }));
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': CONFIG.ANTHROPIC_KEY,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true',
+        },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 1024,
+          system: SYSTEM_PROMPT,
+          messages,
+        }),
+      });
+      if (!res.ok) throw new Error(`API error ${res.status}`);
+      const data = await res.json();
+      reply = data.content?.[0]?.text ?? "Sorry, I couldn't generate a response.";
+    } else {
+      const messages = [
+        { role: 'user', parts: [{ text: SYSTEM_PROMPT }] },
+        { role: 'model', parts: [{ text: "Got it — I'm NEXUS Tutor. Ask me anything." }] },
+        ...chatHistory,
+      ];
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${CONFIG.GEMINI_KEY}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contents: messages }),
+      });
+      if (!res.ok) throw new Error(`API error ${res.status}`);
+      const data = await res.json();
+      reply = data.candidates?.[0]?.content?.parts?.[0]?.text ?? "Sorry, I couldn't generate a response.";
+    }
     removeTyping();
     appendMsg('ai', reply.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/`(.*?)`/g, '<code>$1</code>').replace(/\n/g, '<br>'));
     chatHistory.push({ role: 'model', parts: [{ text: reply }] });

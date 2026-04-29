@@ -5,6 +5,10 @@
 
 const CONFIG = {
   GEMINI_KEY: localStorage.getItem('gemini_key') || '',
+  ANTHROPIC_KEY: localStorage.getItem('anthropic_key') || '',
+  PERPLEXITY_KEY: localStorage.getItem('perplexity_key') || '',
+  TAVILY_KEY: localStorage.getItem('tavily_key') || '',
+  TUTOR_PROVIDER: localStorage.getItem('tutor_provider') || 'gemini', // 'gemini' | 'anthropic'
 };
 
 const NAV_PAGES = [
@@ -57,24 +61,52 @@ function renderSettingsModal() {
   wrap.id = 'settings-modal';
   wrap.className = 'modal-bg';
   wrap.innerHTML = `
-    <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal" onclick="event.stopPropagation()" style="max-width:560px">
       <button class="modal-close" onclick="closeSettings()">✕</button>
       <h2 style="margin:0 0 6px">Settings</h2>
-      <p style="color:var(--t2);margin:0 0 20px;font-size:14px">Add a free Google Gemini API key to power the AI tutor with live answers.</p>
+      <p style="color:var(--t2);margin:0 0 20px;font-size:14px">All keys are stored only in your browser (localStorage). Each one unlocks a different feature.</p>
 
       <div class="field-grp">
-        <label>Gemini API Key (free, no card needed)</label>
+        <label>AI Tutor — pick provider</label>
+        <div style="display:flex;gap:8px;margin-top:6px">
+          <button type="button" class="btn ${CONFIG.TUTOR_PROVIDER === 'gemini' ? 'btn-primary' : 'btn-ghost'} btn-sm" onclick="document.getElementById('tp-gemini').click()">Gemini (free)</button>
+          <button type="button" class="btn ${CONFIG.TUTOR_PROVIDER === 'anthropic' ? 'btn-primary' : 'btn-ghost'} btn-sm" onclick="document.getElementById('tp-anthropic').click()">Claude (better answers)</button>
+        </div>
+        <input type="radio" name="tp" id="tp-gemini" value="gemini" ${CONFIG.TUTOR_PROVIDER === 'gemini' ? 'checked' : ''} style="display:none">
+        <input type="radio" name="tp" id="tp-anthropic" value="anthropic" ${CONFIG.TUTOR_PROVIDER === 'anthropic' ? 'checked' : ''} style="display:none">
+      </div>
+
+      <div class="field-grp">
+        <label>🔷 Gemini API Key <span style="color:var(--t3);text-transform:none;letter-spacing:0;font-weight:400">· free, no card</span></label>
         <input type="password" id="settings-gemini" placeholder="AIza..." value="${CONFIG.GEMINI_KEY}">
-        <div class="field-help">Get one in 30 seconds at <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a> · stored only in your browser</div>
+        <div class="field-help">Get free at <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a> · powers the tutor + StockIQ</div>
+      </div>
+
+      <div class="field-grp">
+        <label>🟠 Anthropic (Claude) API Key <span style="color:var(--t3);text-transform:none;letter-spacing:0;font-weight:400">· optional, paid</span></label>
+        <input type="password" id="settings-anthropic" placeholder="sk-ant-..." value="${CONFIG.ANTHROPIC_KEY}">
+        <div class="field-help">Get at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> · gives the tutor far better reasoning &amp; writing</div>
+      </div>
+
+      <div class="field-grp">
+        <label>🔍 Perplexity API Key <span style="color:var(--t3);text-transform:none;letter-spacing:0;font-weight:400">· optional</span></label>
+        <input type="password" id="settings-perplexity" placeholder="pplx-..." value="${CONFIG.PERPLEXITY_KEY}">
+        <div class="field-help">Get at <a href="https://www.perplexity.ai/settings/api" target="_blank">perplexity.ai/settings/api</a> · enables "Research with sources"</div>
+      </div>
+
+      <div class="field-grp">
+        <label>🌐 Tavily API Key <span style="color:var(--t3);text-transform:none;letter-spacing:0;font-weight:400">· optional, free 1k/mo</span></label>
+        <input type="password" id="settings-tavily" placeholder="tvly-..." value="${CONFIG.TAVILY_KEY}">
+        <div class="field-help">Get free at <a href="https://tavily.com" target="_blank">tavily.com</a> · enables live web search with citations</div>
       </div>
 
       <div style="display:flex;gap:10px;margin-top:24px">
-        <button class="btn btn-primary" onclick="saveSettings()" style="flex:1">Save</button>
+        <button class="btn btn-primary" onclick="saveSettings()" style="flex:1">Save all</button>
         <button class="btn btn-ghost" onclick="closeSettings()">Cancel</button>
       </div>
 
       <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--line);color:var(--t3);font-size:12px">
-        NEXUS shares the Gemini key with StockIQ on this device. Set it once, works in both apps.
+        Keys never leave your browser. Calls go directly from your browser to each provider.
       </div>
     </div>`;
   wrap.addEventListener('click', closeSettings);
@@ -89,10 +121,21 @@ function closeSettings() {
   document.getElementById('settings-modal')?.classList.remove('show');
 }
 function saveSettings() {
-  const key = document.getElementById('settings-gemini').value.trim();
-  if (key) localStorage.setItem('gemini_key', key);
-  else localStorage.removeItem('gemini_key');
-  CONFIG.GEMINI_KEY = key;
+  const fields = [
+    ['settings-gemini', 'gemini_key', 'GEMINI_KEY'],
+    ['settings-anthropic', 'anthropic_key', 'ANTHROPIC_KEY'],
+    ['settings-perplexity', 'perplexity_key', 'PERPLEXITY_KEY'],
+    ['settings-tavily', 'tavily_key', 'TAVILY_KEY'],
+  ];
+  fields.forEach(([elId, lsKey, cfgKey]) => {
+    const v = document.getElementById(elId)?.value.trim() || '';
+    if (v) localStorage.setItem(lsKey, v);
+    else localStorage.removeItem(lsKey);
+    CONFIG[cfgKey] = v;
+  });
+  const provider = document.querySelector('input[name="tp"]:checked')?.value || 'gemini';
+  localStorage.setItem('tutor_provider', provider);
+  CONFIG.TUTOR_PROVIDER = provider;
   closeSettings();
   location.reload();
 }
