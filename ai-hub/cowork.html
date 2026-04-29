@@ -17,6 +17,101 @@
     <p>Not "use AI sometimes for ideas". A structured daily routine — inbox, calendar, meetings, research, writing, planning — with AI doing the bottom 60% so you can do the top 40% better.</p>
   </div>
 
+  <!-- ── INTERACTIVE: Daily Checklist with localStorage ──────────────── -->
+  <div class="section" style="margin-top:0">
+    <div class="section-h">⚡ Today's tracker</div>
+    <h2 class="section-title" id="checklist-title">Daily AI checklist</h2>
+    <p class="section-sub">Tick as you go. Saved in your browser — comes back tomorrow with everything reset for a new day.</p>
+
+    <div class="lesson">
+      <div id="checklist" style="display:flex;flex-direction:column;gap:8px"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:18px;padding-top:16px;border-top:1px solid var(--line);flex-wrap:wrap;gap:10px">
+        <div class="muted" style="font-size:13px" id="checklist-progress">0 / 0 done today</div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-ghost btn-sm" onclick="resetChecklist()">↻ Reset today</button>
+          <button class="btn btn-ghost btn-sm" onclick="streakInfo()">🔥 Streak</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const CHECKLIST_ITEMS = [
+        { id:'morning-inbox', t:'☀️ Morning · Triage inbox (or check AI agent already did)' },
+        { id:'morning-cal', t:'☀️ Morning · Ask AI for outcome of each meeting today' },
+        { id:'morning-3', t:'☀️ Morning · Pick 3 must-do tasks (AI helps reorder by impact)' },
+        { id:'meet-notes', t:'💬 After each meeting · Pull decisions + action items via AI' },
+        { id:'deep-1', t:'🎯 Deep work block 1 · 90 min (AI plan-then-do mode)' },
+        { id:'deep-2', t:'🎯 Deep work block 2 · 90 min (or skip if 1 is enough)' },
+        { id:'research', t:'🔍 Research block · 30 min Perplexity / NotebookLM' },
+        { id:'wind-1', t:'🌙 Wind-down · Dump the day into Claude — what mattered most?' },
+        { id:'wind-2', t:'🌙 Wind-down · Tomorrow\'s ONE thing decided' },
+        { id:'wind-3', t:'🌙 Wind-down · Phone in another room. Email closed.' },
+      ];
+
+      function todayKey() { return 'cowork-' + new Date().toISOString().slice(0, 10); }
+      function getState() { return JSON.parse(localStorage.getItem(todayKey()) || '{}'); }
+      function setState(s) { localStorage.setItem(todayKey(), JSON.stringify(s)); }
+
+      function renderChecklist() {
+        const state = getState();
+        const wrap = document.getElementById('checklist');
+        wrap.innerHTML = CHECKLIST_ITEMS.map(item => {
+          const checked = !!state[item.id];
+          return `<label style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:${checked ? 'rgba(52,211,153,0.06)' : 'var(--bg-2)'};border:1px solid ${checked ? 'rgba(52,211,153,0.30)' : 'var(--line)'};border-radius:10px;cursor:pointer;transition:all 0.15s">
+            <input type="checkbox" ${checked ? 'checked' : ''} data-id="${item.id}" style="width:18px;height:18px;accent-color:var(--cyan)">
+            <span style="font-size:14px;${checked ? 'opacity:0.6;text-decoration:line-through' : ''}">${item.t}</span>
+          </label>`;
+        }).join('');
+        wrap.querySelectorAll('input').forEach(box => {
+          box.addEventListener('change', e => {
+            const s = getState();
+            s[e.target.dataset.id] = e.target.checked;
+            setState(s);
+            updateStreakOnComplete();
+            renderChecklist();
+            updateProgress();
+          });
+        });
+        document.getElementById('checklist-title').textContent = `Daily AI checklist · ${new Date().toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'short'})}`;
+        updateProgress();
+      }
+
+      function updateProgress() {
+        const state = getState();
+        const done = CHECKLIST_ITEMS.filter(i => state[i.id]).length;
+        document.getElementById('checklist-progress').textContent = `${done} / ${CHECKLIST_ITEMS.length} done today`;
+      }
+
+      function resetChecklist() {
+        if (!confirm('Reset today\'s checklist?')) return;
+        localStorage.removeItem(todayKey());
+        renderChecklist();
+      }
+
+      function updateStreakOnComplete() {
+        const state = getState();
+        const allDone = CHECKLIST_ITEMS.every(i => state[i.id]);
+        if (allDone) {
+          const streak = JSON.parse(localStorage.getItem('cowork-streak') || '{"days":0,"last":""}');
+          const today = new Date().toISOString().slice(0, 10);
+          if (streak.last !== today) {
+            const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+            streak.days = streak.last === yesterday ? streak.days + 1 : 1;
+            streak.last = today;
+            localStorage.setItem('cowork-streak', JSON.stringify(streak));
+          }
+        }
+      }
+
+      function streakInfo() {
+        const streak = JSON.parse(localStorage.getItem('cowork-streak') || '{"days":0,"last":""}');
+        alert(`🔥 Current streak: ${streak.days} days\nLast complete day: ${streak.last || 'never'}\n\nTo extend the streak, tick all items today before midnight.`);
+      }
+
+      renderChecklist();
+    </script>
+  </div>
+
   <div class="section">
     <div class="section-h">The stack</div>
     <h2 class="section-title">A lean daily AI setup</h2>
