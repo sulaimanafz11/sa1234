@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Skills — NEXUS</title>
+<link rel="stylesheet" href="styles-hub.css">
+</head>
+<body>
+<header id="app-nav" class="app-nav"></header>
+<main class="page" id="page">
+
+  <div class="hero">
+    <span class="page-eyebrow">Claude Skills · Deep dive</span>
+    <h1>Skills: what they are,<br>where to get them, how to write your own.</h1>
+    <p>Skills are reusable behaviour modules for Claude Code and Claude.ai. Drop a markdown file into the right folder and Claude gains a new capability — security review, PR descriptions, brand-voice writing, image generation workflows. This page covers everything: installing official skills, downloading from the community, authoring your own, and a starter library you can grab right now.</p>
+  </div>
+
+  <div class="callout violet">
+    <strong>The shortest possible explanation.</strong> A skill is a markdown file that tells Claude how to do a specific task. When you ask Claude to do that task, it reads the file and follows the instructions. That's it — no install scripts, no compilation, no API. Just a <code>.md</code> file in a known folder.
+  </div>
+
+  <!-- ── SECTION 1: What is a skill, exactly? ─────────────────────────── -->
+  <div class="section">
+    <div class="section-h">Concept</div>
+    <h2 class="section-title">What a skill actually is, under the hood</h2>
+
+    <div class="lesson">
+      <h3>The structure</h3>
+      <p>A skill is a folder with at least one file: <code>SKILL.md</code> (or any <code>.md</code> file with YAML front-matter). Optional: supporting scripts, reference data, sub-prompts.</p>
+      <pre><code>my-skill/
+├── SKILL.md           ← required: instructions + metadata
+├── examples/          ← optional: example inputs/outputs
+└── helpers/           ← optional: scripts the skill can call</code></pre>
+
+      <h4>The minimum SKILL.md</h4>
+      <pre><code>---
+name: pr-description
+description: Generate a clear pull request description from staged changes.
+---
+
+When the user asks for a PR description:
+1. Run `git log main..HEAD --oneline` to list commits.
+2. Run `git diff main..HEAD --stat` to see scope.
+3. Output: ## Summary (1-3 bullets), ## Test plan (checklist), ## Notes for reviewer (anything non-obvious).
+4. Keep under 200 words.</code></pre>
+
+      <h4>How Claude uses it</h4>
+      <ol>
+        <li>Claude reads all <code>SKILL.md</code> files in the configured skill folders on startup.</li>
+        <li>It sees the <code>description</code> field of each.</li>
+        <li>When your message matches a skill's purpose, Claude follows that skill's instructions.</li>
+        <li>If multiple skills could apply, Claude picks the best fit — or asks you to clarify.</li>
+      </ol>
+
+      <div class="callout">
+        <strong>Skills vs MCP servers vs Subagents — what's the difference?</strong>
+        <ul>
+          <li><strong>Skills</strong> = instructions ("how to do X") — markdown only, no code.</li>
+          <li><strong>MCP servers</strong> = new tools ("can do Y") — actual code/services Claude calls.</li>
+          <li><strong>Subagents</strong> = a separate Claude instance that does a sub-task in parallel — for keeping the main context clean.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 2: Where to install skills ───────────────────────────── -->
+  <div class="section">
+    <div class="section-h">Install paths</div>
+    <h2 class="section-title">Where skills live on disk</h2>
+
+    <div class="lesson">
+      <div class="table-wrap">
+        <table class="tbl">
+          <tr><th>Location</th><th>Scope</th><th>When to use</th></tr>
+          <tr><td><code>~/.claude/skills/</code></td><td>User (all projects)</td><td>Skills you want available everywhere — your writing voice, code review style, commit messages.</td></tr>
+          <tr><td><code>./.claude/skills/</code></td><td>Project (this folder only)</td><td>Skills specific to one project — the project's tests, deployment, domain rules.</td></tr>
+          <tr><td>Built-in (in the Claude Code package)</td><td>Bundled defaults</td><td>You don't manage these — they ship with Claude Code.</td></tr>
+        </table>
+      </div>
+      <p class="muted">On Windows, replace <code>~/</code> with <code>%USERPROFILE%\</code>. Folder structure is the same.</p>
+
+      <h4>Quick install: just drop a file in</h4>
+      <div class="recipe">
+        <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+<pre># Mac/Linux
+mkdir -p ~/.claude/skills/commit-message
+nano ~/.claude/skills/commit-message/SKILL.md
+# Paste skill content, save
+
+# Windows (PowerShell)
+mkdir $env:USERPROFILE\.claude\skills\commit-message
+notepad $env:USERPROFILE\.claude\skills\commit-message\SKILL.md</pre>
+      </div>
+      <p class="muted">No install command needed. Next session, Claude sees the new skill.</p>
+    </div>
+  </div>
+
+  <!-- ── SECTION 3: Where to download skills ──────────────────────────── -->
+  <div class="section">
+    <div class="section-h">Download</div>
+    <h2 class="section-title">Where to get pre-made skills</h2>
+
+    <div class="lesson">
+      <h3>Official Anthropic skills</h3>
+      <ul>
+        <li><strong>Anthropic Cookbook</strong> — <a href="https://github.com/anthropics/anthropic-cookbook" target="_blank">github.com/anthropics/anthropic-cookbook</a> — official examples and reference skills.</li>
+        <li><strong>Claude Code skills repo</strong> — <a href="https://github.com/anthropics/claude-code" target="_blank">github.com/anthropics/claude-code</a> — official examples in the <code>examples/skills/</code> folder.</li>
+        <li><strong>Built-in plugins</strong> — Claude Code ships with plugins like <code>code-reviewer</code>, <code>security-review</code>, <code>simplify</code>. List them with <code>/skills</code> in any session.</li>
+      </ul>
+
+      <h3>Community marketplaces &amp; lists</h3>
+      <ul>
+        <li><strong>Awesome Claude Code</strong> — <a href="https://github.com/hesreallyhim/awesome-claude-code" target="_blank">github.com/hesreallyhim/awesome-claude-code</a> — curated list of skills, hooks, MCP servers, slash commands. Updated weekly.</li>
+        <li><strong>Awesome Claude Skills</strong> — search GitHub for <code>"awesome claude skills"</code> or <code>topic:claude-skills</code> — community lists growing fast.</li>
+        <li><strong>ClaudeLog</strong> — <a href="https://claudelog.com" target="_blank">claudelog.com</a> — community blog with shared skills, hooks, and CLAUDE.md examples.</li>
+        <li><strong>r/ClaudeAI</strong> — <a href="https://reddit.com/r/ClaudeAI" target="_blank">reddit.com/r/ClaudeAI</a> — power users post their skills regularly.</li>
+        <li><strong>Anthropic Discord</strong> — <a href="https://anthropic.com/discord" target="_blank">anthropic.com/discord</a> — #claude-code channel, people share configs and skills.</li>
+      </ul>
+
+      <h3>How to install a skill from GitHub (fastest)</h3>
+      <div class="recipe">
+        <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+<pre># Clone the whole repo to a temp spot
+git clone https://github.com/[user]/[repo].git /tmp/skills-source
+
+# Copy just the skills you want
+cp -r /tmp/skills-source/skills/security-review ~/.claude/skills/
+
+# Or for a single SKILL.md file
+mkdir -p ~/.claude/skills/security-review
+curl -o ~/.claude/skills/security-review/SKILL.md \
+  https://raw.githubusercontent.com/[user]/[repo]/main/skills/security-review/SKILL.md</pre>
+      </div>
+
+      <h3>How to install a skill via Claude Code</h3>
+      <p class="muted">Easier route: just ask Claude. It can clone, read, and place the file for you.</p>
+      <div class="recipe">
+        <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+<pre>Install the security-review skill from
+github.com/anthropics/claude-code/examples/skills
+into my user-level skills folder.</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 4: 8 starter skills you can use today ─────────────────── -->
+  <div class="section">
+    <div class="section-h">Starter library</div>
+    <h2 class="section-title">8 skills to copy into <code>~/.claude/skills/</code> right now</h2>
+    <p class="section-sub">Each one is a complete <code>SKILL.md</code>. Copy → paste into a new file → done.</p>
+
+    <div class="lesson recipe">
+      <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+      <h3>1. <code>commit-message/SKILL.md</code></h3>
+<pre>---
+name: commit-message
+description: Write a clear conventional commit message based on staged changes
+---
+
+When the user asks for a commit message:
+1. Run `git diff --cached` to see staged changes (and `git status` if context is unclear).
+2. Identify the type: feat / fix / chore / docs / refactor / test / perf / style.
+3. Subject line: imperative mood, ≤50 chars, no period. ("add" not "added")
+4. If non-trivial, add a body separated by blank line. Explain WHY, not WHAT.
+5. Reference any issue: "Closes #123" at the bottom.
+
+Never:
+- Use emojis unless CONTRIBUTING.md asks for them
+- Mention Claude / AI in the message
+- Write "as per the user's request" or similar fluff</pre>
+    </div>
+
+    <div class="lesson recipe">
+      <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+      <h3>2. <code>pr-description/SKILL.md</code></h3>
+<pre>---
+name: pr-description
+description: Generate a pull request description from the diff against main
+---
+
+When asked for a PR description:
+1. Run `git log $(git merge-base HEAD main)..HEAD --oneline` for commits.
+2. Run `git diff $(git merge-base HEAD main)..HEAD --stat` for scope.
+
+Output exactly this structure:
+
+## Summary
+[1-3 bullets — what changed and why]
+
+## Test plan
+- [ ] [step 1]
+- [ ] [step 2]
+
+## Notes for reviewer
+[Anything non-obvious. Tradeoffs taken. Things considered & rejected.]
+
+Keep total under 250 words. Reviewers don't read more.</pre>
+    </div>
+
+    <div class="lesson recipe">
+      <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+      <h3>3. <code>security-review/SKILL.md</code></h3>
+<pre>---
+name: security-review
+description: Audit a file or PR for common security issues
+---
+
+When asked for a security review of a file or change:
+
+1. Look for these specific issues, in priority order:
+   - Hardcoded secrets (API keys, passwords, tokens) — even in examples
+   - SQL injection (string concat in queries, unparameterized inputs)
+   - XSS (innerHTML with user input, dangerouslySetInnerHTML in React)
+   - SSRF (user-controlled URLs in fetch/axios calls)
+   - Path traversal (user input in file paths without sanitization)
+   - Auth bypass (missing auth checks on routes, weak session handling)
+   - Insecure deserialization (eval, pickle, unsafe yaml.load)
+   - CORS misconfiguration (Access-Control-Allow-Origin: *)
+
+2. For each finding:
+   - file:line
+   - severity: critical / high / medium / low
+   - the issue (1 sentence)
+   - the fix (code snippet)
+
+3. If clean, say so explicitly. Don't invent issues.
+
+Skip: style nits, theoretical risks that can't actually happen in this code path.</pre>
+    </div>
+
+    <div class="lesson recipe">
+      <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+      <h3>4. <code>simplify/SKILL.md</code></h3>
+<pre>---
+name: simplify
+description: Review changed code for over-engineering and simplify it
+---
+
+When asked to simplify recently changed code:
+
+1. Run `git diff` to see what changed.
+2. For each change, check for:
+   - Premature abstraction (single-use helpers, classes wrapping one function)
+   - Unnecessary error handling (catching things that can't happen)
+   - Defensive programming for internal callers
+   - Backwards-compat shims for code we control
+   - Duplication that could be extracted (only if used 3+ times)
+   - Dead code / unused params / orphan imports
+   - Comments restating what the code does
+
+3. For each, propose a smaller version. Show before/after diffs.
+
+Default to fewer lines, fewer abstractions, fewer features. Three similar lines beats a premature abstraction.</pre>
+    </div>
+
+    <div class="lesson recipe">
+      <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+      <h3>5. <code>brand-writer/SKILL.md</code></h3>
+<pre>---
+name: brand-writer
+description: Write copy in [BRAND] voice for any deliverable
+---
+
+You are writing for [BRAND NAME].
+
+## Voice rules
+- UK English. No corporate-speak ("circle back", "leverage", "moving forward").
+- Confident, never hedging. Cut "just", "maybe", "I think", "perhaps".
+- One strong sentence beats three soft ones.
+- Use contractions: it's, don't, we're.
+- Never start with "In today's fast-paced world…" or similar throat-clearing.
+
+## Audience
+[Describe target audience demographics + psychographics]
+
+## What we sell
+[Products + the actual value they create]
+
+## Examples of past copy that nailed the voice
+[Paste 2-3 short examples here so the model can pattern-match]
+
+When asked to write something:
+1. Ask which deliverable + word count if not given.
+2. Draft v1.
+3. Cut 30%. Show v2.
+4. Briefly explain (3 bullets max) what changed and why.</pre>
+    </div>
+
+    <div class="lesson recipe">
+      <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+      <h3>6. <code>plan-then-do/SKILL.md</code></h3>
+<pre>---
+name: plan-then-do
+description: For non-trivial tasks, plan before executing
+---
+
+For any task that involves more than 3 steps OR touches more than 1 file:
+
+1. **Plan** (3-5 bullets): what files you'll change, in what order, why.
+2. **Clarify** (max 3 questions, only if genuinely ambiguous): wait for user reply.
+3. **Execute**: do the work.
+4. **Verify**: run tests / linter / build. Report results.
+
+Skip the plan step for trivial tasks (typo fix, single-line change, rename).
+
+Never silently change scope. If you discover the task is bigger than expected, stop and ask.</pre>
+    </div>
+
+    <div class="lesson recipe">
+      <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+      <h3>7. <code>devil-advocate/SKILL.md</code></h3>
+<pre>---
+name: devil-advocate
+description: Stress-test a plan, idea, or decision before committing
+---
+
+When asked to be devil's advocate on a plan, idea, decision, or piece of code:
+
+Output exactly:
+
+## 5 strongest counter-arguments (ranked by likelihood × impact)
+1. [argument] — Likelihood: H/M/L · Impact: H/M/L
+2. ...
+
+## Cheapest test for each (1-3 days, low cost)
+[How would you test each before committing?]
+
+## Kill criteria
+[What evidence would make me abandon this entirely?]
+
+## Steel-man (one sentence)
+[The strongest reason this WILL work — to keep you honest]
+
+Be direct. Don't soften. The kindest thing is to save them from a bad decision.</pre>
+    </div>
+
+    <div class="lesson recipe">
+      <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+      <h3>8. <code>fewer-permission-prompts/SKILL.md</code></h3>
+<pre>---
+name: fewer-permission-prompts
+description: Add a curated allowlist of safe commands to settings.json to reduce prompts
+---
+
+When invoked:
+
+1. Read the recent session transcript (or ask the user to paste it).
+2. Identify all Bash and MCP tool calls that are clearly read-only and safe:
+   - git status, git log, git diff, git branch, git show
+   - ls, cat, head, tail, wc, find (read-only)
+   - grep, rg, fd
+   - npm list, pnpm list, pip list (read-only)
+   - any "show / read / get / list" MCP tool calls
+
+3. Generate a JSON snippet to add to ~/.claude/settings.json:
+
+{
+  "autoApprove": [
+    "Bash(git status)",
+    "Bash(git log)",
+    ...
+  ]
+}
+
+4. NEVER add destructive commands: rm, push, force, reset --hard, drop, delete.
+5. Show the diff for the user to apply manually.</pre>
+    </div>
+  </div>
+
+  <!-- ── SECTION 5: How to write your own ─────────────────────────────── -->
+  <div class="section">
+    <div class="section-h">Authoring</div>
+    <h2 class="section-title">Write your own skill in 5 minutes</h2>
+
+    <div class="lesson">
+      <h3>The recipe</h3>
+      <ol>
+        <li>Identify a task you do repeatedly with Claude (e.g. "write release notes from recent commits").</li>
+        <li>Open the chat where you've successfully done it 2-3 times.</li>
+        <li>Distill the instructions you'd give a junior to do it: inputs, steps, output format, constraints.</li>
+        <li>Save as <code>~/.claude/skills/[skill-name]/SKILL.md</code> with YAML front-matter.</li>
+        <li>Test in a new session — ask Claude to do the task. Iterate the SKILL.md until output is consistent.</li>
+      </ol>
+
+      <h3>The good-skill checklist</h3>
+      <ul>
+        <li>✅ <strong>Single purpose.</strong> One skill per task. Don't bundle.</li>
+        <li>✅ <strong>Description is searchable.</strong> The model picks skills from descriptions — make them concrete.</li>
+        <li>✅ <strong>Numbered steps.</strong> Models follow numbered steps better than prose.</li>
+        <li>✅ <strong>Output format spelled out.</strong> Show the exact structure you want.</li>
+        <li>✅ <strong>"Never do" list.</strong> Saves you from re-correcting common mistakes.</li>
+        <li>❌ <strong>Don't paste your CLAUDE.md content into a skill.</strong> CLAUDE.md is for project-wide rules; skills are for specific tasks.</li>
+      </ul>
+
+      <h3>Sharing your skills</h3>
+      <ul>
+        <li>Put them in a public GitHub repo named <code>your-name-claude-skills</code> with a clear README.</li>
+        <li>Tag the repo with <code>claude-skills</code> so it shows up in searches.</li>
+        <li>Submit to <a href="https://github.com/hesreallyhim/awesome-claude-code" target="_blank">awesome-claude-code</a> via PR.</li>
+        <li>Post in r/ClaudeAI and the Anthropic Discord #claude-code channel.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout violet" style="margin-top:48px">
+    <strong>Next.</strong> See <a href="setup.html">Setup</a> if you haven't installed Claude Code yet, or <a href="github.html">GitHub</a> for hosting your skills repo and discovering more from the community.
+  </div>
+
+</main>
+<footer id="app-foot" class="foot"></footer>
+<script src="shared-hub.js"></script>
+<script>sharedInit('skills');</script>
+</body>
+</html>
