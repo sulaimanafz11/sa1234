@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub — NEXUS</title>
+<link rel="stylesheet" href="styles-hub.css">
+</head>
+<body>
+<header id="app-nav" class="app-nav"></header>
+<main class="page" id="page">
+
+  <div class="hero">
+    <span class="page-eyebrow">GitHub · Full breakdown</span>
+    <h1>Git &amp; GitHub,<br>from zero to confident.</h1>
+    <p>Git is the version-control system. GitHub is the place that hosts it and adds a social/collaboration layer on top. This page covers everything: terminology, the commands you actually use daily, GitHub features (PRs, Issues, Actions, Pages), the GitHub Marketplace, and how AI tools (Claude Code, Copilot, Cursor) plug in.</p>
+  </div>
+
+  <div class="callout violet">
+    <strong>30-second mental model.</strong> Git tracks every change to your files. GitHub stores that history online so you (and others) can collaborate. A "repo" is a project. A "branch" is a parallel version of the project. A "pull request (PR)" is asking to merge a branch into the main version. That's 80% of it.
+  </div>
+
+  <!-- ── PART 1: Why bother ──────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-h">Why this matters</div>
+    <h2 class="section-title">Even non-coders need GitHub now</h2>
+    <div class="lesson">
+      <ul>
+        <li><strong>AI tools store everything on GitHub.</strong> Skills, MCP servers, n8n templates, prompt libraries — all on GitHub.</li>
+        <li><strong>Claude Code and Cursor live on GitHub.</strong> You'll clone repos, create branches, open PRs daily.</li>
+        <li><strong>It's your portfolio.</strong> Recruiters look at GitHub before LinkedIn now.</li>
+        <li><strong>It's the only honest "save".</strong> Cloud docs hide history. Git shows every change, who, when, why.</li>
+        <li><strong>Free hosting.</strong> GitHub Pages = free static website hosting. NEXUS itself can be hosted there in 2 clicks.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── PART 2: Setup ───────────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-h">Setup</div>
+    <h2 class="section-title">Install Git, create a GitHub account</h2>
+    <div class="lesson">
+      <ol>
+        <li><strong>Sign up at <a href="https://github.com" target="_blank">github.com</a></strong> — free. Use your real name + a professional username.</li>
+        <li><strong>Install Git</strong>:
+          <ul>
+            <li><strong>Windows:</strong> download <a href="https://git-scm.com/download/win" target="_blank">Git for Windows</a> — comes with Git Bash terminal, very useful.</li>
+            <li><strong>Mac:</strong> <code>brew install git</code> (or it comes with Xcode Command Line Tools).</li>
+          </ul>
+        </li>
+        <li><strong>Configure your identity</strong> — only do this once per machine:
+          <div class="recipe">
+            <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+<pre>git config --global user.name "Your Name"
+git config --global user.email "your@email.com"
+git config --global init.defaultBranch main</pre>
+          </div>
+        </li>
+        <li><strong>Authenticate to GitHub</strong> — easiest way is the official GitHub CLI:
+          <div class="recipe">
+            <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+<pre># Install gh
+# Mac:    brew install gh
+# Windows: winget install --id GitHub.cli
+
+# Then log in (one-time)
+gh auth login
+# Pick GitHub.com → HTTPS → Yes auth Git → Login with browser → done</pre>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- ── PART 3: The core commands ───────────────────────────────────── -->
+  <div class="section">
+    <div class="section-h">Core commands</div>
+    <h2 class="section-title">Daily git, in plain English</h2>
+    <div class="lesson">
+      <div class="table-wrap">
+        <table class="tbl">
+          <tr><th>Command</th><th>What it actually does</th></tr>
+          <tr><td><code>git clone &lt;url&gt;</code></td><td>Download a repo to your computer.</td></tr>
+          <tr><td><code>git status</code></td><td>What's changed since last commit. Use this constantly.</td></tr>
+          <tr><td><code>git add .</code></td><td>Stage all changes for the next commit.</td></tr>
+          <tr><td><code>git add &lt;file&gt;</code></td><td>Stage just one file (safer than <code>git add .</code>).</td></tr>
+          <tr><td><code>git commit -m "message"</code></td><td>Save a snapshot of staged changes with a description.</td></tr>
+          <tr><td><code>git push</code></td><td>Upload your local commits to GitHub.</td></tr>
+          <tr><td><code>git pull</code></td><td>Download the latest changes from GitHub into your local copy.</td></tr>
+          <tr><td><code>git checkout -b feature-name</code></td><td>Create a new branch and switch to it.</td></tr>
+          <tr><td><code>git checkout main</code></td><td>Switch back to the main branch.</td></tr>
+          <tr><td><code>git log --oneline</code></td><td>See your commit history (one line each).</td></tr>
+          <tr><td><code>git diff</code></td><td>Show what's changed but not yet committed.</td></tr>
+          <tr><td><code>gh repo create</code></td><td>Create a new GitHub repo from the current folder.</td></tr>
+          <tr><td><code>gh pr create</code></td><td>Open a PR for the current branch — saves clicking around the website.</td></tr>
+        </table>
+      </div>
+
+      <h4>The 90% workflow you'll use every day</h4>
+      <div class="recipe">
+        <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+<pre># Start a new feature
+git checkout main
+git pull
+git checkout -b add-search-feature
+
+# Make your changes…
+# Then save them
+git add .
+git commit -m "feat: add search bar to home page"
+git push -u origin add-search-feature
+
+# Open a PR (GitHub website OR command line)
+gh pr create --title "Add search feature" --body "Adds a search bar to the home page"
+
+# After it's merged
+git checkout main
+git pull
+git branch -d add-search-feature  # clean up</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PART 4: GitHub features ─────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-h">Beyond git</div>
+    <h2 class="section-title">GitHub features worth knowing</h2>
+
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-icon">🔃</div>
+        <div class="card-h">Pull Requests (PRs)</div>
+        <p class="muted" style="font-size:13.5px">A formal request to merge your branch into main. Where code review happens. Comments, suggestions, approval, then merge. Even solo, use PRs — they document why you made each change.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🐛</div>
+        <div class="card-h">Issues</div>
+        <p class="muted" style="font-size:13.5px">Bug reports, feature requests, todos. Linked to PRs ("Closes #42"). Use them as your project's todo list.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚡</div>
+        <div class="card-h">Actions</div>
+        <p class="muted" style="font-size:13.5px">Automation that runs on events (push, PR, schedule). Run tests, deploy, lint, build, post to Slack. Free for public repos, generous free tier for private. The most powerful free feature on GitHub.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🌐</div>
+        <div class="card-h">Pages</div>
+        <p class="muted" style="font-size:13.5px">Free static hosting. Push HTML/CSS/JS to a repo → it's live at <code>username.github.io/repo</code>. NEXUS could be hosted here for £0.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📦</div>
+        <div class="card-h">Releases</div>
+        <p class="muted" style="font-size:13.5px">Tagged versions of your project (v1.0.0, v1.1.0). Auto-generates downloadable zips. Use Actions to publish releases automatically.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔐</div>
+        <div class="card-h">Secrets</div>
+        <p class="muted" style="font-size:13.5px">Store API keys / tokens encrypted at the repo or organisation level. Available to Actions but never exposed in code.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🍴</div>
+        <div class="card-h">Forks</div>
+        <p class="muted" style="font-size:13.5px">Your own copy of someone else's repo. Used to propose changes via PR back to the original.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⭐</div>
+        <div class="card-h">Stars / Watch</div>
+        <p class="muted" style="font-size:13.5px">Star = bookmark. Watch = get notified of activity. Stars are also a popularity signal — useful for evaluating libraries.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PART 5: GitHub Marketplace ──────────────────────────────────── -->
+  <div class="section">
+    <div class="section-h">The Marketplace</div>
+    <h2 class="section-title">GitHub Marketplace — what it actually is</h2>
+
+    <div class="lesson">
+      <p>The <a href="https://github.com/marketplace" target="_blank">GitHub Marketplace</a> is GitHub's app store. Two main categories:</p>
+
+      <h3>1. Apps (integrations that act on your repos)</h3>
+      <p>Third-party services that get permission to read/write your repos. They show up as comments, status checks, or automated PRs.</p>
+      <ul>
+        <li><strong>Vercel / Netlify</strong> — auto-deploy your site on every push. Free tiers.</li>
+        <li><strong>Codecov / Coveralls</strong> — code coverage reporting.</li>
+        <li><strong>Snyk / Dependabot</strong> — security vulnerability scanning.</li>
+        <li><strong>Linear / Jira</strong> — link issues across PMtools.</li>
+        <li><strong>Sentry</strong> — error tracking that links errors back to the commit that introduced them.</li>
+        <li><strong>Slack / Discord</strong> — post events into your channels.</li>
+      </ul>
+
+      <h3>2. Actions (reusable automation steps)</h3>
+      <p>Pre-built building blocks for GitHub Actions workflows. Most are free.</p>
+      <ul>
+        <li><strong>actions/checkout</strong> — checks out your repo. Used in nearly every workflow.</li>
+        <li><strong>actions/setup-node</strong>, <strong>setup-python</strong>, <strong>setup-go</strong> — install language toolchains.</li>
+        <li><strong>actions/cache</strong> — cache dependencies between runs (speeds up CI dramatically).</li>
+        <li><strong>peaceiris/actions-gh-pages</strong> — deploy to GitHub Pages.</li>
+        <li><strong>JamesIves/github-pages-deploy-action</strong> — alternative Pages deploy.</li>
+        <li><strong>aws-actions/configure-aws-credentials</strong> — connect to AWS without storing static keys.</li>
+        <li><strong>anthropics/claude-code-action</strong> — run Claude Code as a CI step (review PRs, fix issues, etc.).</li>
+      </ul>
+
+      <h4>How to install a Marketplace app</h4>
+      <ol>
+        <li>Go to <a href="https://github.com/marketplace" target="_blank">github.com/marketplace</a> and find the app.</li>
+        <li>Click <strong>"Install it for free"</strong> (or paid tier).</li>
+        <li>Choose which repos it can access — single repo or all.</li>
+        <li>Authorise. The app appears in your repo settings under "Integrations".</li>
+      </ol>
+
+      <h4>How to use a Marketplace Action</h4>
+      <p class="muted">Actions go in <code>.github/workflows/[name].yml</code> — a YAML file in your repo. Example: auto-deploy to Pages on every push to main.</p>
+      <div class="recipe">
+        <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+<pre>name: Deploy to GitHub Pages
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./   # folder to publish</pre>
+      </div>
+      <p class="muted">Push that file. Next push triggers the workflow → site goes live.</p>
+    </div>
+  </div>
+
+  <!-- ── PART 6: AI workflows on GitHub ───────────────────────────────── -->
+  <div class="section">
+    <div class="section-h">AI on GitHub</div>
+    <h2 class="section-title">Plug AI into your repos</h2>
+
+    <div class="lesson">
+      <h3>Claude Code Action</h3>
+      <p>Anthropic's official Action lets you trigger Claude Code from a GitHub workflow — run code reviews, fix issues mentioned in PR comments, generate release notes.</p>
+      <ul>
+        <li><strong>Repo:</strong> <a href="https://github.com/anthropics/claude-code-action" target="_blank">github.com/anthropics/claude-code-action</a></li>
+        <li><strong>Trigger Claude in a PR comment:</strong> mention <code>@claude</code> with a request, e.g. "@claude please add tests for the new auth function".</li>
+        <li><strong>Setup:</strong> install the GitHub App + add your Anthropic API key as a repo secret.</li>
+      </ul>
+
+      <div class="recipe">
+        <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+<pre>name: Claude Code
+on:
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+
+jobs:
+  claude:
+    if: contains(github.event.comment.body, '@claude')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}</pre>
+      </div>
+
+      <h3>GitHub Copilot</h3>
+      <p>GitHub's own AI coding assistant. £8/mo Individual. Inline completion + chat in your IDE. Works in VS Code, JetBrains, Vim, Neovim, Visual Studio.</p>
+      <p class="muted">Cheaper than Cursor / Claude Code but less powerful for big multi-file edits. Best for: "I know what I'm typing, just complete it faster."</p>
+
+      <h3>Copilot Workspace (separate from Copilot)</h3>
+      <p>Browser-based "describe a feature → AI plans + implements it as a PR" experience. Like Lovable but inside GitHub. Currently in technical preview.</p>
+
+      <h3>Other AI Actions worth knowing</h3>
+      <ul>
+        <li><strong>Aider Action</strong> — run the open-source <code>aider</code> coding agent in CI.</li>
+        <li><strong>Mentat</strong> — AI code editing in PR comments.</li>
+        <li><strong>RepoMix</strong> — pack your whole repo as a single file Claude can read in one prompt.</li>
+        <li><strong>OpenAI Workflows</strong> — community Actions that call GPT for various tasks (PR titles, changelog generation, translations).</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── PART 7: Discovery ───────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-h">Discovery</div>
+    <h2 class="section-title">Finding the good stuff on GitHub</h2>
+
+    <div class="lesson">
+      <ul>
+        <li><strong>Trending</strong> — <a href="https://github.com/trending" target="_blank">github.com/trending</a> — top repos this week. Filter by language.</li>
+        <li><strong>Topics</strong> — <a href="https://github.com/topics" target="_blank">github.com/topics</a> — browse by tag. Useful tags: <code>claude-skills</code>, <code>mcp-server</code>, <code>n8n-templates</code>, <code>ai-agents</code>.</li>
+        <li><strong>Stars sort</strong> — search a topic, sort by stars. Quickest way to find proven projects.</li>
+        <li><strong>"Awesome" lists</strong> — search <code>"awesome [topic]"</code> — community-curated lists of the best repos for any subject.</li>
+        <li><strong>Code search</strong> — <a href="https://github.com/search" target="_blank">github.com/search</a> — search across all public code. Find real-world usage of any library/API.</li>
+      </ul>
+
+      <h4>Awesome lists you should bookmark</h4>
+      <ul>
+        <li><a href="https://github.com/hesreallyhim/awesome-claude-code" target="_blank">awesome-claude-code</a> — skills, hooks, MCP, slash commands</li>
+        <li><a href="https://github.com/punkpeye/awesome-mcp-servers" target="_blank">awesome-mcp-servers</a> — every MCP server worth installing</li>
+        <li><a href="https://github.com/sindresorhus/awesome" target="_blank">sindresorhus/awesome</a> — the meta-list of awesome lists</li>
+        <li><a href="https://github.com/hijiangtao/awesome-ai-tools" target="_blank">awesome-ai-tools</a> — every AI tool, organised by category</li>
+        <li><a href="https://github.com/e2b-dev/awesome-ai-agents" target="_blank">awesome-ai-agents</a> — every notable AI agent project</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── PART 8: Publish your own ─────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-h">Publish</div>
+    <h2 class="section-title">Push your first project to GitHub</h2>
+
+    <div class="lesson">
+      <div class="recipe">
+        <button class="btn-copy" onclick="copyPre(this)">Copy</button>
+<pre># In your project folder
+git init
+git add .
+git commit -m "feat: initial commit"
+
+# Create the GitHub repo + push (with gh CLI)
+gh repo create my-project --public --source=. --remote=origin --push
+
+# Or without gh CLI:
+# 1. Create the empty repo on github.com manually
+# 2. Then:
+git remote add origin https://github.com/your-username/my-project.git
+git branch -M main
+git push -u origin main</pre>
+      </div>
+
+      <h4>Make it look professional</h4>
+      <ul>
+        <li>Add a <code>README.md</code> — first thing visitors see. What it does, how to use it, screenshot if visual.</li>
+        <li>Add a <code>LICENSE</code> file — MIT is the safest default for open source.</li>
+        <li>Add tags via the repo "About" sidebar — they help discovery.</li>
+        <li>Add a description (one sentence) and link.</li>
+        <li>Add 1-2 screenshots in the README — increases stars by ~3×.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout violet" style="margin-top:48px">
+    <strong>Next.</strong> Use what you learn here to install <a href="skills.html">Skills</a> from GitHub, host your own NEXUS-style hub on GitHub Pages, or browse <a href="creators.html">Creators</a> who teach more.
+  </div>
+
+</main>
+<footer id="app-foot" class="foot"></footer>
+<script src="shared-hub.js"></script>
+<script>sharedInit('github');</script>
+</body>
+</html>
