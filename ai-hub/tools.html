@@ -17,6 +17,78 @@
     <p>Chat models, coding copilots, image &amp; video generators, audio, automation, research, writing. Filter by category, click any tool for strengths, weaknesses, pricing, and the killer use case.</p>
   </div>
 
+  <!-- ── INTERACTIVE: Tool Picker Quiz ────────────────────────────────── -->
+  <div class="section" style="margin-top:0">
+    <div class="section-h">⚡ Don't know where to start?</div>
+    <h2 class="section-title">Tool Picker — 4 questions, 1 answer</h2>
+
+    <div class="lesson" id="quiz-shell">
+      <div id="q-step-0" class="q-step">
+        <h3>1 of 4 — What do you want to do?</h3>
+        <div class="grid grid-2" style="margin-top:14px">
+          <button class="path-card q-opt" data-q="goal" data-v="build">
+            <span class="step-num">A</span>
+            <h3>Build an app or website</h3>
+            <p>Ship a real product, MVP, or landing page.</p>
+          </button>
+          <button class="path-card q-opt" data-q="goal" data-v="write">
+            <span class="step-num">B</span>
+            <h3>Write or research</h3>
+            <p>Long-form text, research briefs, brand copy, emails.</p>
+          </button>
+          <button class="path-card q-opt" data-q="goal" data-v="visual">
+            <span class="step-num">C</span>
+            <h3>Make images or video</h3>
+            <p>Brand visuals, product shots, social content, videos.</p>
+          </button>
+          <button class="path-card q-opt" data-q="goal" data-v="automate">
+            <span class="step-num">D</span>
+            <h3>Automate a workflow</h3>
+            <p>Inbox triage, lead-gen, content repurposing, agents.</p>
+          </button>
+        </div>
+      </div>
+
+      <div id="q-step-1" class="q-step" style="display:none">
+        <h3>2 of 4 — How comfortable are you with code?</h3>
+        <div class="grid grid-3" style="margin-top:14px">
+          <button class="path-card q-opt" data-q="skill" data-v="none"><span class="step-num">A</span><h3>Zero / non-coder</h3><p>I want to describe it, not type code.</p></button>
+          <button class="path-card q-opt" data-q="skill" data-v="some"><span class="step-num">B</span><h3>A bit</h3><p>I can edit a config file or follow a tutorial.</p></button>
+          <button class="path-card q-opt" data-q="skill" data-v="lots"><span class="step-num">C</span><h3>I'm a developer</h3><p>I write code daily.</p></button>
+        </div>
+      </div>
+
+      <div id="q-step-2" class="q-step" style="display:none">
+        <h3>3 of 4 — What's your monthly budget?</h3>
+        <div class="grid grid-3" style="margin-top:14px">
+          <button class="path-card q-opt" data-q="budget" data-v="free"><span class="step-num">A</span><h3>£0 — free only</h3><p>Free tiers and open source.</p></button>
+          <button class="path-card q-opt" data-q="budget" data-v="cheap"><span class="step-num">B</span><h3>Up to £25/mo</h3><p>One serious tool subscription.</p></button>
+          <button class="path-card q-opt" data-q="budget" data-v="pro"><span class="step-num">C</span><h3>£50+/mo</h3><p>Stack of pro tools, no constraint.</p></button>
+        </div>
+      </div>
+
+      <div id="q-step-3" class="q-step" style="display:none">
+        <h3>4 of 4 — How fast do you need a result?</h3>
+        <div class="grid grid-2" style="margin-top:14px">
+          <button class="path-card q-opt" data-q="speed" data-v="now"><span class="step-num">A</span><h3>Today / this weekend</h3><p>Need something working ASAP.</p></button>
+          <button class="path-card q-opt" data-q="speed" data-v="learn"><span class="step-num">B</span><h3>I'll invest the time to learn</h3><p>Willing to spend a week getting it right.</p></button>
+        </div>
+      </div>
+
+      <div id="q-result" style="display:none">
+        <h3>Your starting stack</h3>
+        <div id="q-recommendation"></div>
+        <div style="margin-top:18px;display:flex;gap:10px">
+          <button class="btn btn-ghost btn-sm" onclick="restartQuiz()">↻ Restart quiz</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-h">Or browse all</div>
+    <h2 class="section-title">The full atlas</h2>
+
   <div class="filter-bar">
     <input type="text" class="search-box" id="search" placeholder="Search tools (e.g. image, code, agent)..." oninput="filterTools()">
     <button class="filter-chip active" data-cat="all" onclick="setCat('all')">All</button>
@@ -41,6 +113,109 @@
 <script src="shared-hub.js"></script>
 <script src="hub-tools-data.js"></script>
 <script src="hub-tools.js"></script>
-<script>sharedInit('tools'); renderTools();</script>
+<script>
+sharedInit('tools'); renderTools();
+
+// ── Tool Picker Quiz ──────────────────────────────────────────────────
+const quizAnswers = {};
+const quizSteps = ['goal','skill','budget','speed'];
+
+document.querySelectorAll('.q-opt').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const q = btn.dataset.q, v = btn.dataset.v;
+    quizAnswers[q] = v;
+    const idx = quizSteps.indexOf(q);
+    document.getElementById('q-step-' + idx).style.display = 'none';
+    if (idx + 1 < quizSteps.length) {
+      document.getElementById('q-step-' + (idx + 1)).style.display = 'block';
+    } else {
+      showQuizResult();
+    }
+    document.getElementById('quiz-shell').scrollIntoView({behavior:'smooth', block:'start'});
+  });
+});
+
+function restartQuiz() {
+  Object.keys(quizAnswers).forEach(k => delete quizAnswers[k]);
+  document.querySelectorAll('.q-step').forEach(s => s.style.display = 'none');
+  document.getElementById('q-result').style.display = 'none';
+  document.getElementById('q-step-0').style.display = 'block';
+  document.getElementById('quiz-shell').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function recBlock(emoji, name, why, link) {
+  return `<div class="card" style="margin-bottom:14px">
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:8px">
+      <div style="font-size:30px">${emoji}</div>
+      <div style="flex:1">
+        <div class="card-h" style="margin:0">${name}</div>
+      </div>
+      ${link ? `<a class="btn btn-primary btn-sm" href="${link}" target="_blank">Open →</a>` : ''}
+    </div>
+    <p class="muted" style="margin:0;font-size:13.5px">${why}</p>
+  </div>`;
+}
+
+function showQuizResult() {
+  document.getElementById('q-result').style.display = 'block';
+  const { goal, skill, budget, speed } = quizAnswers;
+  const recs = [];
+
+  if (goal === 'build') {
+    if (skill === 'none' && speed === 'now') {
+      recs.push(recBlock('💗','Lovable','Describe your app in plain English → working web app with auth, DB, deploy. Best non-coder pick for a Friday-night MVP.','https://lovable.dev'));
+      recs.push(recBlock('▲','v0 (Vercel)','If you just need beautiful UI components and landing pages without a backend.','https://v0.dev'));
+    } else if (skill === 'lots') {
+      recs.push(recBlock('⌬','Claude Code','Most powerful agentic coding tool. Multi-file edits, refactors, runs tests. Pair with Cursor for daily coding.','https://claude.com/claude-code'));
+      recs.push(recBlock('🎯','Cursor','VS Code fork with the best inline AI UX. £16/mo. Everyday coding companion.','https://cursor.com'));
+    } else {
+      recs.push(recBlock('⚡','Bolt','Spin up Next.js apps in your browser, fast. Friendly to semi-coders.','https://bolt.new'));
+      recs.push(recBlock('🟧','Replit Agent','Prompt → working app → live URL. Hosting included. Easy onboarding.','https://replit.com'));
+    }
+    if (budget === 'free') recs.push(recBlock('🌊','Windsurf','Strongest free-tier coding agent if you want to avoid subscriptions.','https://windsurf.com'));
+  }
+
+  if (goal === 'write') {
+    recs.push(recBlock('🟠','Claude','Best general writing model. Long context, careful reasoning, brand-voice consistency. Free tier is decent; £18/mo Pro unlocks Projects.','https://claude.ai'));
+    if (budget !== 'free') recs.push(recBlock('🟢','ChatGPT Plus','Slightly weaker writing than Claude but unbeats it for image gen + voice + custom GPTs in one subscription.','https://chat.openai.com'));
+    recs.push(recBlock('🔍','Perplexity','For research-heavy writing. Cites sources. Replaces Google for fact questions.','https://perplexity.ai'));
+    recs.push(recBlock('📓','NotebookLM','Free. Upload your own PDFs/notes → ask questions grounded in your sources. Brilliant for briefs.','https://notebooklm.google'));
+  }
+
+  if (goal === 'visual') {
+    if (budget === 'free') {
+      recs.push(recBlock('🍌','NanoBanana (Gemini 2.5 Flash Image)','Free via the Gemini app. Conversational edits, character consistency. Best free image AI in 2026.','https://gemini.google.com'));
+      recs.push(recBlock('🎛️','Krea','Free credits + access to Flux/MJ in one canvas. Real-time generation.','https://krea.ai'));
+    } else {
+      recs.push(recBlock('🎨','Midjourney v7','£8-£48/mo. Most beautiful artistic outputs, period. The leader for posters/brand visuals.','https://midjourney.com'));
+      recs.push(recBlock('⚡','Flux','Photoreal king. Best for portraits, product photography, fine-tuneable for custom characters.','https://blackforestlabs.ai'));
+    }
+    if (speed !== 'now') {
+      recs.push(recBlock('🎞️','Runway','For video — Gen-4 motion brush, video-to-video. Most mature creator toolkit.','https://runwayml.com'));
+    }
+  }
+
+  if (goal === 'automate') {
+    if (skill === 'none' || skill === 'some') {
+      recs.push(recBlock('🔗','n8n','The visual canvas every YouTube agent video uses. Free if you self-host. 400+ integrations.','https://n8n.io'));
+      recs.push(recBlock('🟣','Make','Cleaner UI than n8n if you find n8n dense. £8+/mo.','https://make.com'));
+      if (budget !== 'free') recs.push(recBlock('⚡','Zapier','Most integrations of any tool, easiest "when X then Y". Pricier at scale.','https://zapier.com'));
+    } else {
+      recs.push(recBlock('🧠','Claude Agent SDK','Code your own agents in Python/TS. Full control, deploy anywhere. API costs only.','https://docs.claude.com'));
+      recs.push(recBlock('🔗','n8n','Even devs use n8n for the speed of wiring up integrations.','https://n8n.io'));
+    }
+    if (speed === 'now' && budget !== 'free') {
+      recs.push(recBlock('🤖','Manus','Hands-off browser agent — describe a task, it does it. Slower but zero setup.','https://manus.im'));
+    }
+  }
+
+  if (!recs.length) {
+    recs.push(recBlock('◇','Start with the free Gemini key','Open the AI Tutor tab and add a free Gemini key — it will answer your specific situation in detail.','chat.html'));
+  }
+
+  document.getElementById('q-recommendation').innerHTML = recs.join('') +
+    `<div class="callout violet"><strong>Why these?</strong> Based on your answers: goal=${goal}, skill=${skill}, budget=${budget}, speed=${speed}. Every recommendation balances those four. Browse the full atlas below for alternatives.</div>`;
+}
+</script>
 </body>
 </html>
