@@ -21,6 +21,127 @@
     <strong>Reality check.</strong> All of these work. None of them work overnight. Pick <em>one</em>, give it 60 days of focused effort, and you'll either have income or a clear signal that the niche / offer needs adjusting. Trying all seven at once = none of them work.
   </div>
 
+  <!-- ── INTERACTIVE: Money Path Matcher ──────────────────────────────── -->
+  <div class="section" style="margin-top:32px">
+    <div class="section-h">⚡ Don't know which path is yours?</div>
+    <h2 class="section-title">Money Path Matcher — 4 questions</h2>
+
+    <div class="lesson" id="mp-shell">
+      <div id="mp-step-0" class="mp-step">
+        <h3>1 of 4 — How much time can you actually commit per week?</h3>
+        <div class="grid grid-3" style="margin-top:14px">
+          <button class="path-card mp-opt" data-q="time" data-v="low"><span class="step-num">A</span><h3>Under 5 hrs</h3><p>Side-of-desk only.</p></button>
+          <button class="path-card mp-opt" data-q="time" data-v="mid"><span class="step-num">B</span><h3>5-15 hrs</h3><p>Evenings &amp; weekends.</p></button>
+          <button class="path-card mp-opt" data-q="time" data-v="full"><span class="step-num">C</span><h3>20+ hrs</h3><p>Going for it properly.</p></button>
+        </div>
+      </div>
+
+      <div id="mp-step-1" class="mp-step" style="display:none">
+        <h3>2 of 4 — How comfortable with code / building?</h3>
+        <div class="grid grid-3" style="margin-top:14px">
+          <button class="path-card mp-opt" data-q="skill" data-v="zero"><span class="step-num">A</span><h3>Zero technical</h3><p>No code, no comfort with terminals.</p></button>
+          <button class="path-card mp-opt" data-q="skill" data-v="some"><span class="step-num">B</span><h3>Can use AI builders</h3><p>Lovable / Bolt / n8n drag-drop level.</p></button>
+          <button class="path-card mp-opt" data-q="skill" data-v="dev"><span class="step-num">C</span><h3>I write code</h3><p>Build things in Cursor / Claude Code / VS Code.</p></button>
+        </div>
+      </div>
+
+      <div id="mp-step-2" class="mp-step" style="display:none">
+        <h3>3 of 4 — Do you have a network / audience?</h3>
+        <div class="grid grid-2" style="margin-top:14px">
+          <button class="path-card mp-opt" data-q="net" data-v="none"><span class="step-num">A</span><h3>Starting from 0</h3><p>No followers, no client list, no warm contacts.</p></button>
+          <button class="path-card mp-opt" data-q="net" data-v="some"><span class="step-num">B</span><h3>Yes, some</h3><p>Active LinkedIn / X / day-job network I can tap.</p></button>
+        </div>
+      </div>
+
+      <div id="mp-step-3" class="mp-step" style="display:none">
+        <h3>4 of 4 — Patience profile?</h3>
+        <div class="grid grid-2" style="margin-top:14px">
+          <button class="path-card mp-opt" data-q="speed" data-v="cash"><span class="step-num">A</span><h3>Need cash within 30 days</h3><p>Income now, scale later.</p></button>
+          <button class="path-card mp-opt" data-q="speed" data-v="build"><span class="step-num">B</span><h3>Will play long game</h3><p>OK with 3-6 months before serious income.</p></button>
+        </div>
+      </div>
+
+      <div id="mp-result" style="display:none">
+        <h3>Your best-fit path</h3>
+        <div id="mp-recommendation"></div>
+        <div style="margin-top:18px"><button class="btn btn-ghost btn-sm" onclick="restartMP()">↻ Restart matcher</button></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  const mpAnswers = {};
+  const mpSteps = ['time','skill','net','speed'];
+  document.querySelectorAll('.mp-opt').forEach(btn => {
+    btn.addEventListener('click', () => {
+      mpAnswers[btn.dataset.q] = btn.dataset.v;
+      const idx = mpSteps.indexOf(btn.dataset.q);
+      document.getElementById('mp-step-' + idx).style.display = 'none';
+      if (idx + 1 < mpSteps.length) document.getElementById('mp-step-' + (idx + 1)).style.display = 'block';
+      else showMPResult();
+      document.getElementById('mp-shell').scrollIntoView({behavior:'smooth', block:'start'});
+    });
+  });
+  function restartMP() {
+    Object.keys(mpAnswers).forEach(k => delete mpAnswers[k]);
+    document.querySelectorAll('.mp-step').forEach(s => s.style.display = 'none');
+    document.getElementById('mp-result').style.display = 'none';
+    document.getElementById('mp-step-0').style.display = 'block';
+    document.getElementById('mp-shell').scrollIntoView({behavior:'smooth', block:'start'});
+  }
+  function pathCard(num, name, why, first) {
+    return `<div class="card" style="margin-bottom:14px;border-color:rgba(34,211,238,0.30)">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:8px">
+        <span class="step-num">PATH ${num}</span>
+        <div class="card-h" style="margin:0">${name}</div>
+      </div>
+      <p class="muted" style="margin:0 0 10px;font-size:13.5px">${why}</p>
+      <p style="margin:0;font-size:13.5px"><strong style="color:var(--cyan-2)">First action this week:</strong> ${first}</p>
+    </div>`;
+  }
+  function showMPResult() {
+    document.getElementById('mp-result').style.display = 'block';
+    const { time, skill, net, speed } = mpAnswers;
+    let recs = [];
+
+    // Cash now decision branch
+    if (speed === 'cash') {
+      if (skill === 'zero' && net === 'some') {
+        recs.push(pathCard('1','Freelance services','Use AI to deliver writing/research/admin work 5× faster. Charge per project. Fastest cash with skills you already have.','DM 30 people in your network with a specific service offer this Friday.'));
+      } else if (skill === 'zero' && net === 'none') {
+        recs.push(pathCard('1','Freelance services on Upwork/Fiverr','Cold-marketplace path. Apply to 10 jobs/day for 2 weeks with AI-aided portfolio samples.','Pick 1 niche (e.g. SEO meta descriptions). Build 2 free samples. List on Upwork tonight.'));
+        recs.push(pathCard('2','Productised services','Sell a fixed-scope, fixed-price package on a one-page site. Easier to market than hourly.','Buy a Carrd domain, write the offer page, post in 5 niche subreddits/Slack groups.'));
+      } else if (skill === 'some') {
+        recs.push(pathCard('5','Automation agency','Build n8n flows for local businesses. £1k-5k setup + £500-2.5k/mo retainer.','Pick a niche (e.g. property agents). Build 2 free flows. DM 20 of them with a Loom.'));
+        recs.push(pathCard('2','Productised services','Package "Lead-gen agent in 14 days — £999" or similar. Easy to sell with a portfolio.','Build the flow once for free for 1 person. Get a testimonial. Then sell.'));
+      } else {
+        recs.push(pathCard('7','Vibe-coded MVP for someone else','Founders/coaches pay £2k-15k for a 14-day MVP build. Highest cash velocity for devs in 2026.','Build 2 sample MVPs for yourself (post in public). Then DM 30 founders.'));
+        recs.push(pathCard('1','Freelance dev with AI leverage','Same dev work, 3× faster with Cursor + Claude Code. Charge same rates, deliver in half the time.','Update LinkedIn headline. Apply to 5 jobs on Toptal/Pangea this week.'));
+      }
+    }
+
+    // Long game branch
+    if (speed === 'build') {
+      if (skill === 'zero' || skill === 'some') {
+        recs.push(pathCard('4','Content creator / faceless brand','Build a niche audience (AI tools, niche productivity, faith, finance). Monetise via sponsors / affiliates / your own offer.','Pick 1 niche. Commit to 90 posts in 90 days starting Monday.'));
+        if (time === 'mid' || time === 'full') {
+          recs.push(pathCard('6','Info products / cohort','Teach what you learn. Course / cohort / paid newsletter. Higher margin than services once built.','Don\'t make a course yet. Sell the underlying service 5× first. Then package.'));
+        }
+      }
+      if (skill === 'some' || skill === 'dev') {
+        recs.push(pathCard('3','Micro-SaaS','Tiny SaaS solving one problem. £5-30/mo. 200 paying users = real income. AI tooling makes this realistic for solo builders.','Find 1 Reddit thread saying "I wish there was a tool that…" — build the smallest version next weekend.'));
+      }
+    }
+
+    if (!recs.length) {
+      recs.push(pathCard('1','Freelance services','Safest default — sell what you know with AI leverage.','Pick the niche, build 2 samples, DM 50 specific people.'));
+    }
+
+    document.getElementById('mp-recommendation').innerHTML = recs.join('') +
+      `<div class="callout violet" style="margin-top:14px"><strong>Why this?</strong> Based on time=${time}, skill=${skill}, network=${net}, urgency=${speed}. Read the full path detail below — pricing, examples, risks. Then commit to <em>one</em> for 60 days.</div>`;
+  }
+  </script>
+
   <div class="section">
     <div class="section-h">Path 1</div>
     <h2 class="section-title">AI-assisted freelance services</h2>
